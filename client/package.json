@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "both": "concurrently \"vite\" \"cd .. && cd server && nodemon\"",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -12,6 +13,7 @@
   "dependencies": {
     "@material-tailwind/react": "^2.1.5",
     "@reduxjs/toolkit": "^1.9.7",
+    "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "emoji-mart": "^5.5.2",
     "formik": "^2.4.5",
