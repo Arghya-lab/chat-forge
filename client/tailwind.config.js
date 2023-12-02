@@ -1,7 +1,7 @@
-// eslint-disable-next-line no-undef
-const withMT = require("@material-tailwind/react/utils/withMT");
+import withMT from "@material-tailwind/react/utils/withMT";
 
 export default withMT({
+  darkMode: "class",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -27,8 +27,32 @@ export default withMT({
           800: "#323232",
           900: "#191919",
         },
-      },}
+        shadow: {
+          50: "#4a4c51",
+          100: "#424549",
+          200: "#313338",
+          300: "#2f3136",
+          400: "#2b2d31",
+          500: "#282b30",
+          600: "#292b2f",
+          700: "#23272a",
+          800: "#202225",
+          900: "#1e1f22",
+        },
+        pearl: {
+          50: "#fefefe",
+          100: "#f9f9f9",
+          200: "#f6f6f6",
+          300: "#ededed",
+          400: "#e9e9e9",
+          500: "#e4e4e4",
+          600: "#dedede",
+          700: "#d9d9d9",
+          800: "#d4d4d4",
+          900: "#d0d0d0",
+        },
+      },
+    },
   },
   plugins: [],
-})
-
+});

@@ -13,7 +13,7 @@ function AuthPage() {
           import.meta.env.VITE_IMG_BASE_URL
         }/loginPage_bg.png)`,
       }}>
-      <div className="w-[480px] bg-neutral-800 p-8 rounded-md">
+      <div className="w-[480px] bg-shadow-300 p-8 rounded-md">
         {pageType === "login" ? (
           <>
             <Login />

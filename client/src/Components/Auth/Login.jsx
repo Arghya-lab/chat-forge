@@ -48,7 +48,7 @@ function Login() {
             Email
           </label>
           <input
-            className="w-full rounded border-none p-2 h-10 bg-gray-900 text-neutral-100 text-sm focus:outline-none"
+            className="w-full rounded border-none p-2 h-10 bg-shadow-900 text-neutral-100 text-sm focus:outline-none"
             id="email"
             name="email"
             type="email"
