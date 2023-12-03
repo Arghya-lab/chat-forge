@@ -20,6 +20,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    imgUrl: {
+      type: String,
+      default: "",
+    },
+    // conversations: {
+    //   type: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Conversations",
+    //   }],
+    //   default: [],
+    // },
   },
   { timestamps: true }
 );

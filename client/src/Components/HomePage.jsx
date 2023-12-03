@@ -2,6 +2,7 @@ import ChannelListBar from "./ChannelListBar";
 import ServerListBar from "./ServerListBar";
 
 function HomePage() {
+  
   return (
     <div
       className="grid w-screen h-screen bg-pearl-50 dark:bg-shadow-200"

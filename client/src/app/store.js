@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authSlice from "../features/auth/authSlice";
 import infoSlice from "../features/info/infoSlice";
+import serversSlice from "../features/servers/serversSlice";
 
 const reducer = combineReducers({
   auth: authSlice,
   info: infoSlice,
+  servers: serversSlice,
 });
 
 const loadStateFromLocalStorage = () => {

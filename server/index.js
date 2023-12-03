@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectWithMongo = require("./db")
 const authRoutes = require("./routes/auth")
+const serverRoutes = require("./routes/server")
 
 const app = express();
 const port = process.env.PORT;
@@ -19,6 +20,8 @@ connectWithMongo()
 /////*  ----- Routes  ----- *///////
 //  Auth
 app.use("/api/auth", authRoutes)
+//  Server
+app.use("/api/server", serverRoutes)
 
 
 
