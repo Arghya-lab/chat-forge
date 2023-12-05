@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 
-const serverSchema = new mongoose.Schema(
+const channelSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     type: {
       type: String,
@@ -21,7 +22,7 @@ const serverSchema = new mongoose.Schema(
         {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Message",
-          unique: true,
+          // unique: true,
         },
       ],
       default: [],
@@ -30,5 +31,5 @@ const serverSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Server = mongoose.model("Server", serverSchema);
-module.exports = Server;
+const Channel = mongoose.model("Channel", channelSchema);
+module.exports = Channel;

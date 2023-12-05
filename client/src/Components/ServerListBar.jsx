@@ -13,6 +13,7 @@ import { setSelectedMode } from "../features/info/infoSlice";
 import { Tooltip } from "@material-tailwind/react";
 import CreateServerForm from "./CreateServerModal";
 import { setServers } from "../features/servers/serversSlice";
+import { setSelected } from "../features/selected/selectedSlice";
 
 const modes = [
   {
@@ -49,6 +50,21 @@ function ServerListBar() {
   const handleModeChange = () => {
     dispatch(setSelectedMode((selectedMode + 1) % modes.length));
   };
+
+  const handleDirectMessageClick = () => {
+    dispatch(setSelected({ server: {id: "myself", name: "myself", imgUrl: ""}, channels: [] }))
+    setSelectedItem("directMessage")
+  };
+
+  const handleServerBtnClick = async (server) => {
+    try {
+      const res = await axios.get(`/channel/${server.id}`, authHeader);
+      dispatch(setSelected({ server, channels: res.data }))
+      setSelectedItem(server.id)
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -87,7 +103,7 @@ function ServerListBar() {
                   ? "rounded-2xl bg-blue-800"
                   : "rounded-full bg-shadow-200"
               } w-12 h-12 flex items-center justify-center`}
-              onClick={() => setSelectedItem("directMessage")}>
+              onClick={handleDirectMessageClick}>
               {selectedItem === "directMessage" ||
               hoverItem === "directMessage" ? (
                 <MessageSquare className="text-gray-100" size={28} />
@@ -106,7 +122,7 @@ function ServerListBar() {
             className="mb-3 w-full flex items-center justify-center relative cursor-pointer"
             onPointerEnter={() => setHoverItem(server.id)}
             onPointerLeave={() => setHoverItem(null)}
-            onClick={() => setSelectedItem(server.id)}>
+            onClick={()=>handleServerBtnClick(server)}>
             <div
               className={`w-1 rounded-r-md bg-neutral-700 dark:bg-neutral-200 absolute left-0 transition-height duration-300 ease-in-out ${
                 selectedItem === server.id

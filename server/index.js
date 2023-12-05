@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectWithMongo = require("./db")
 const authRoutes = require("./routes/auth")
 const serverRoutes = require("./routes/server");
+const channelRoutes = require("./routes/channel");
 
 const app = express();
 const port = process.env.PORT;
@@ -22,6 +23,8 @@ connectWithMongo()
 app.use("/api/auth", authRoutes)
 //  Server
 app.use("/api/server", serverRoutes)
+//  Channel
+app.use("/api/channel", channelRoutes)
 
 
 

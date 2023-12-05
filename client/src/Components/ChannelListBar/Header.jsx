@@ -9,22 +9,25 @@ import {
   Users,
 } from "lucide-react";
 import InviteLinkModal from "./InviteLinkModal";
-
-const serverId = "656da200c8365be8804253f8";
+import CreateChannelModal from "./CreateChannelModal";
+import { useSelector } from "react-redux";
 
 function Header() {
+  const { server } = useSelector(state=>state.selected)
+
   const modalRef = useRef(null);
-  const [open, setOpen] = useState(false);
+  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
   const [openLinkModal, setOpenLinkModal] = useState(false);
+  const [openCreateChannelModal, setOpenCreateChannelModal] = useState(false);
 
   const [inviteCode, setInviteCode] = useState(null);
 
-  const handleInvitePeople = async () => {
+  const handleOpenInviteLinkModal = async () => {
     try {
-      const res = await axios.get(`/server/inviteLink/${serverId}`, authHeader);
+      const res = await axios.get(`/server/inviteLink/${server.id}`, authHeader);
       setInviteCode(res.data.inviteCode);
       setOpenLinkModal(true);
-      setOpen(false);
+      setIsActionModalOpen(false);
     } catch (error) {
       console.log(error.message);
     }
@@ -34,9 +37,9 @@ function Header() {
     <div className="flex justify-center w-full">
       <div
         className="w-full px-4 py-3 flex justify-between items-center border-b-2 border-pearl-600 dark:border-shadow-900 shadow-sm cursor-pointer hover:bg-pearl-300 dark:hover:bg-shadow-300"
-        onClick={() => setOpen(true)}>
-        <h6 className="font-semibold text-shadow-900 dark:text-pearl-800">
-          CraftingMiners
+        onClick={() => setIsActionModalOpen(true)}>
+        <h6 className="text-lg font-semibold text-shadow-900 dark:text-pearl-800">
+          {server.name}
         </h6>
         <ChevronDown
           size={20}
@@ -46,11 +49,11 @@ function Header() {
       {/* Modal */}
       <div
         className={`absolute top-0 left-0 bottom-0 right-0 bg-transparent ${
-          open ? "block" : "hidden"
+          isActionModalOpen ? "block" : "hidden"
         }`}
         onClick={(e) => {
           if (modalRef.current && !modalRef.current.contains(e.target)) {
-            setOpen(false);
+            setIsActionModalOpen(false);
           }
         }}>
         <div
@@ -58,7 +61,7 @@ function Header() {
           className="relative top-14 left-20 z-20 w-56 p-2 bg-pearl-500 dark:bg-neutral-900 rounded-md">
           <div
             className="serverActionBtn text-indigo-800 dark:text-indigo-300 hover:bg-indigo-500 hover:text-pearl-50 dark:hover:text-pearl-50"
-            onClick={handleInvitePeople}>
+            onClick={handleOpenInviteLinkModal}>
             <p>Invite People</p>
             <UserPlus size={18} />
           </div>
@@ -70,7 +73,12 @@ function Header() {
             <p>Manage Members</p>
             <Users size={18} />
           </div>
-          <div className="serverActionBtn text-shadow-400 dark:text-pearl-900 hover:bg-indigo-500 hover:text-pearl-50 dark:hover:text-pearl-50">
+          <div
+            className="serverActionBtn text-shadow-400 dark:text-pearl-900 hover:bg-indigo-500 hover:text-pearl-50 dark:hover:text-pearl-50"
+            onClick={() => {
+              setIsActionModalOpen(false);
+              setOpenCreateChannelModal(true);
+            }}>
             <p>Create Channel</p>
             <PlusCircle size={18} />
           </div>
@@ -85,6 +93,10 @@ function Header() {
         setOpenLinkModal={setOpenLinkModal}
         inviteCode={inviteCode}
         setInviteCode={setInviteCode}
+      />
+      <CreateChannelModal
+        openCreateChannelModal={openCreateChannelModal}
+        setOpenCreateChannelModal={setOpenCreateChannelModal}
       />
     </div>
   );
