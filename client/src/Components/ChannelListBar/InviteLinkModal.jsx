@@ -1,7 +1,6 @@
 import { useRef } from "react";
-import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
-import axios from "../../utils/axios";
+import axios, { authHeader } from "../../utils/axios";
 import { X } from "lucide-react";
 
 const serverId = "656da200c8365be8804253f8";
@@ -12,8 +11,6 @@ function InviteLinkModal({
   inviteCode,
   setInviteCode,
 }) {
-  const { token } = useSelector((state) => state.auth);
-
   const modalRef = useRef(null);
   const linkRef = useRef(null);
   const copyBtnRef = useRef(null);
@@ -27,7 +24,10 @@ function InviteLinkModal({
         copyBtnRef.current.classList.add("bg-green-600", "hover:bg-green-700");
         copyBtnRef.current.innerText = "Copied";
         setTimeout(() => {
-          copyBtnRef.current.classList.remove("bg-green-600", "hover:bg-green-700");
+          copyBtnRef.current.classList.remove(
+            "bg-green-600",
+            "hover:bg-green-700"
+          );
           copyBtnRef.current.innerText = "Copy";
         }, 3000);
       })
@@ -41,17 +41,16 @@ function InviteLinkModal({
       const res = await axios.post(
         `server/inviteLink/${serverId}`,
         {},
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
+        authHeader
       );
       setInviteCode(res.data.inviteCode);
       generateBtnRef.current.classList.add("bg-teal-600", "hover:bg-teal-700");
       generateBtnRef.current.innerText = "Generated";
       setTimeout(() => {
-        generateBtnRef.current.classList.remove("bg-teal-600", "hover:bg-teal-700");
+        generateBtnRef.current.classList.remove(
+          "bg-teal-600",
+          "hover:bg-teal-700"
+        );
         generateBtnRef.current.innerText = "Generate";
       }, 3000);
     } catch (error) {
@@ -116,8 +115,8 @@ function InviteLinkModal({
             <p className="text-xs dark:text-pearl-800">
               <span className="text-base text-red-700 font-semibold">
                 Caution:
-              </span>&nbsp;
-              if you generate new invite link the old link will not work.
+              </span>
+              &nbsp; if you generate new invite link the old link will not work.
             </p>
           </div>
         </div>

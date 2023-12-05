@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "../utils/axios";
+import axios, { authHeader } from "../utils/axios";
 import {
   MessageSquare,
   MessageSquareDashed,
@@ -12,7 +11,7 @@ import {
 } from "lucide-react";
 import { setSelectedMode } from "../features/info/infoSlice";
 import { Tooltip } from "@material-tailwind/react";
-import CreateServerForm from "./CreateServerForm";
+import CreateServerForm from "./CreateServerModal";
 import { setServers } from "../features/servers/serversSlice";
 
 const modes = [
@@ -37,7 +36,6 @@ function ServerListBar() {
 
   const { selectedMode } = useSelector((state) => state.info);
   const { servers } = useSelector((state) => state.servers);
-  const { token } = useSelector((state) => state.auth);
 
   const [selectedItem, setSelectedItem] = useState("directMessage");
   const [hoverItem, setHoverItem] = useState(null);
@@ -55,16 +53,13 @@ function ServerListBar() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await axios.get("/server", {
-          headers: {
-            Authorization: token,
-          },
-        });
+        const res = await axios.get("/server", authHeader);
         dispatch(setServers(res.data));
       } catch (error) {
         console.log(error.message);
       }
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

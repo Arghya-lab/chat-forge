@@ -1,9 +1,9 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "../utils/axios";
+import axios, { multipartHeader } from "../utils/axios";
 import {
   Button,
   Dialog,
@@ -14,13 +14,12 @@ import { X } from "lucide-react";
 import AvatarImgDrop from "./AvatarImgDrop";
 import { addServer } from "../features/servers/serversSlice";
 
-function CreateServerForm({
+function CreateServerModal({
   openCreateServerForm,
   setOpenCreateServerForm,
   setSelectedItem,
 }) {
   const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.auth);
   const [serverAvatar, setServerAvatar] = useState(null);
   const [imgDropError, setImgDropError] = useState(false);
 
@@ -57,12 +56,7 @@ function CreateServerForm({
         const formData = new FormData();
         formData.append("name", values.name);
         formData.append("serverAvatar", serverAvatar);
-        const res = await axios.post("/server/create", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",   // Important for sending files
-            Authorization: token,
-          },
-        });
+        const res = await axios.post("/server/create", formData, multipartHeader);
         dispatch(addServer(res.data));
         handleModalClose();
       } catch (error) {
@@ -138,10 +132,10 @@ function CreateServerForm({
   );
 }
 
-CreateServerForm.propTypes = {
+CreateServerModal.propTypes = {
   openCreateServerForm: PropTypes.bool.isRequired,
   setOpenCreateServerForm: PropTypes.func.isRequired,
   setSelectedItem: PropTypes.func.isRequired,
 };
 
-export default CreateServerForm;
+export default CreateServerModal;

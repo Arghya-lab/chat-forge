@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import axios from "../../utils/axios";
+import axios, { authHeader } from "../../utils/axios";
 import {
   ChevronDown,
   PlusCircle,
@@ -14,8 +13,6 @@ import InviteLinkModal from "./InviteLinkModal";
 const serverId = "656da200c8365be8804253f8";
 
 function Header() {
-  const { token } = useSelector((state) => state.auth);
-
   const modalRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [openLinkModal, setOpenLinkModal] = useState(false);
@@ -24,11 +21,7 @@ function Header() {
 
   const handleInvitePeople = async () => {
     try {
-      const res = await axios.get(`/server/inviteLink/${serverId}`, {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const res = await axios.get(`/server/inviteLink/${serverId}`, authHeader);
       setInviteCode(res.data.inviteCode);
       setOpenLinkModal(true);
       setOpen(false);
