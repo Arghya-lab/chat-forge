@@ -12,8 +12,8 @@ const signupUser = async (req, res) => {
     if (await User.findOne({ email })) {
       return res.status(400).json({ error: "User already present." });
     }
-    bcrypt.hash(password, saltRounds, function (err, hash) {
-      const user = User.create({
+    bcrypt.hash(password, saltRounds, async (err, hash) => {
+      const user = await User.create({
         email,
         userName,
         displayName,

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -7,6 +8,7 @@ import { setAuth } from "../../features/auth/authSlice";
 
 function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -26,6 +28,7 @@ function Login() {
       try {
         const res = await axios.post("/auth/login", values);
         dispatch(setAuth(res.data));
+        navigate("/", { replace: true }); //  Use { replace: true } so we don't create another entry in the history stack for the login page.
       } catch (error) {
         console.log(error.message);
       }

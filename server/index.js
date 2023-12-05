@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const connectWithMongo = require("./db")
 const authRoutes = require("./routes/auth")
-const serverRoutes = require("./routes/server")
+const serverRoutes = require("./routes/server");
 
 const app = express();
 const port = process.env.PORT;

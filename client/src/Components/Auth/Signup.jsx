@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -7,6 +8,7 @@ import { setAuth } from "../../features/auth/authSlice";
 
 function Signup() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -21,12 +23,12 @@ function Signup() {
         .required("Email is required"),
       displayName: Yup.string()
         .required("Display name is required")
-        .min(5, "Display name must be at least 6 characters")
-        .max(10, "Display name should not exceed 20 characters"),
+        .min(5, "Display name must be at least 5 characters")
+        .max(16, "Display name should not exceed 16 characters"),
       userName: Yup.string()
         .required("User name is required")
-        .min(8, "User name must be at least 6 characters")
-        .max(16, "User name should not exceed 20 characters"),
+        .min(8, "User name must be at least 8 characters")
+        .max(16, "User name should not exceed 16 characters"),
       password: Yup.string()
         .required("Password is required")
         .min(6, "Password must be at least 6 characters")
@@ -36,6 +38,7 @@ function Signup() {
       try {
         const res = await axios.post("/auth/signup", values);
         dispatch(setAuth(res.data))
+        navigate("/", { replace: true }); //  Use { replace: true } so we don't create another entry in the history stack for the login page.
       } catch (error) {
         console.log(error.message);
       }

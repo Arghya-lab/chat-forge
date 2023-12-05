@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  servers: [],  // [ { id, name, imgUrl } ]
+  servers: [], // [ { id, name, imgUrl } ]
 };
 
 export const serversSlice = createSlice({
@@ -12,7 +12,9 @@ export const serversSlice = createSlice({
       state.servers = action.payload;
     },
     addServer: (state, action) => {
-      state.servers.push(action.payload)
+      if (!state.servers.includes(action.payload)) {
+        state.servers.push(action.payload);
+      }
     },
   },
 });

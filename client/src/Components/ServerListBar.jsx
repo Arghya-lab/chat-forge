@@ -37,7 +37,7 @@ function ServerListBar() {
 
   const { selectedMode } = useSelector((state) => state.info);
   const { servers } = useSelector((state) => state.servers);
-  const { token } = useSelector(state=>state.auth)
+  const { token } = useSelector((state) => state.auth);
 
   const [selectedItem, setSelectedItem] = useState("directMessage");
   const [hoverItem, setHoverItem] = useState(null);
@@ -53,17 +53,19 @@ function ServerListBar() {
   };
 
   useEffect(() => {
-    (async()=>
-    {try {
-      const res = await axios.get("/server",{headers: {
-        "Authorization": token
-      }});
-      dispatch(setServers(res.data));
-      console.log(res.data);
-    } catch (error) {
-      console.log(error.message);
-    }})()
-  }, [])
+    (async () => {
+      try {
+        const res = await axios.get("/server", {
+          headers: {
+            Authorization: token,
+          },
+        });
+        dispatch(setServers(res.data));
+      } catch (error) {
+        console.log(error.message);
+      }
+    })();
+  }, []);
 
   return (
     <div className="pt-3 w-[72px] h-screen flex item-center flex-col bg-pearl-300 dark:bg-shadow-900 overflow-y-scroll  no-scrollbar">
@@ -120,7 +122,9 @@ function ServerListBar() {
               }`}
             />
             <img
-              src={`${import.meta.env.VITE_IMG_BASE_URL}/server_imgs/${server.imgUrl}`}
+              src={`${import.meta.env.VITE_IMG_BASE_URL}/server_imgs/${
+                server.imgUrl
+              }`}
               height={48}
               width={48}
               className={`transition-shape duration-300 ease-in-out ${

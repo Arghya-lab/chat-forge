@@ -4,6 +4,8 @@ import AuthPage from "./Components/Auth/AuthPage";
 import HomePage from "./Components/HomePage";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
+import RequireAuth from "./Components/Auth/RequireAuth";
+import ServerInvite from "./Components/ServerInvite";
 
 function App() {
   const { selectedMode } = useSelector((state) => state.info); // 0 -> auto, 1 -> light, 2-> dark
@@ -23,7 +25,22 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<AuthPage />} />
-      <Route path="/" element={<HomePage />} />
+      <Route
+        path="/"
+        element={
+          <RequireAuth>
+            <HomePage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/invite/:inviteCode"
+        element={
+          <RequireAuth>
+            <ServerInvite />
+          </RequireAuth>
+        }
+      />
     </Routes>
   );
 }

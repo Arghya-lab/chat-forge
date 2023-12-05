@@ -33,7 +33,6 @@ function CreateServerForm({
   const handleDropzoneValue = (img) => {
     setServerAvatar(img);
     if (img.size > 1048576) {
-      console.log(img.size);
       setImgDropError("File size should not exceed 1024kb");
     } else {
       setImgDropError(false);
@@ -48,20 +47,21 @@ function CreateServerForm({
       name: Yup.string()
         .required("Server name is required")
         .min(4, "Server name must be at least 4 characters")
-        .max(12, "Server name should not exceed 12 characters"),
+        .max(20, "Server name should not exceed 20 characters"),
     }),
     onSubmit: async (values) => {
       try {
-        if (!serverAvatar) setImgDropError("Images not uploaded");
-        if (imgDropError) return;
+        if (!serverAvatar) {
+          return setImgDropError("Images not uploaded");
+        }
         const formData = new FormData();
         formData.append("name", values.name);
         formData.append("serverAvatar", serverAvatar);
         const res = await axios.post("/server/create", formData, {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data",   // Important for sending files
             Authorization: token,
-          }, // Important for sending files
+          },
         });
         dispatch(addServer(res.data));
         handleModalClose();
@@ -84,7 +84,7 @@ function CreateServerForm({
           <X strokeWidth={2.75} size={26} />
         </div>
       </div>
-      <Typography className="text-neutral-800 text-sm px-8 pt-3 pb-5">
+      <Typography className="text-neutral-600 text-sm font-medium px-8 pt-3 pb-5">
         Give your new server a personality with a name and an icon. You can
         always change it later.
       </Typography>
@@ -94,7 +94,7 @@ function CreateServerForm({
             <AvatarImgDrop onDropzoneValue={handleDropzoneValue} />
           </div>
           {imgDropError && (
-            <p className="text-red-400 text-xs mb-2 mt-1 text-center">
+            <p className="text-red-400 text-xs mb-4 mt-1 text-center">
               {imgDropError}
             </p>
           )}
@@ -119,7 +119,7 @@ function CreateServerForm({
           ) : null}
         </div>
         <p className="text-xs px-4 text-neutral-700 mt-1">
-          By creating a server, you agree to Community Guidelines
+          By creating a server, you agree to Community Guidelines.
         </p>
         <DialogFooter className="flex justify-between">
           <Button
