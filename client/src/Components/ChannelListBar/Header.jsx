@@ -13,7 +13,7 @@ import CreateChannelModal from "./CreateChannelModal";
 import { useSelector } from "react-redux";
 
 function Header() {
-  const { server } = useSelector(state=>state.selected)
+  const { server } = useSelector((state) => state.selected);
 
   const modalRef = useRef(null);
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
@@ -24,7 +24,10 @@ function Header() {
 
   const handleOpenInviteLinkModal = async () => {
     try {
-      const res = await axios.get(`/server/inviteLink/${server.id}`, authHeader);
+      const res = await axios.get(
+        `/server/inviteLink/${server.id}`,
+        authHeader
+      );
       setInviteCode(res.data.inviteCode);
       setOpenLinkModal(true);
       setIsActionModalOpen(false);
@@ -34,17 +37,12 @@ function Header() {
   };
 
   return (
-    <div className="flex justify-center w-full">
+    <div className="flex justify-center w-full min-h-[56px]">
       <div
-        className="w-full px-4 py-3 flex justify-between items-center border-b-2 border-pearl-600 dark:border-shadow-900 shadow-sm cursor-pointer hover:bg-pearl-300 dark:hover:bg-shadow-300"
+        className="w-full px-4 py-3 flex justify-between items-center border-b-2 border-pearl-600 dark:border-shadow-900 shadow-sm cursor-pointer hover:bg-pearl-300 dark:hover:bg-shadow-300 text-shadow-900 dark:text-pearl-100"
         onClick={() => setIsActionModalOpen(true)}>
-        <h6 className="text-lg font-semibold text-shadow-900 dark:text-pearl-800">
-          {server.name}
-        </h6>
-        <ChevronDown
-          size={20}
-          className="text-shadow-900 dark:text-pearl-800"
-        />
+        <h6 className="text-lg font-semibold">{server.name}</h6>
+        <ChevronDown size={20} strokeWidth={2.5} />
       </div>
       {/* Modal */}
       <div

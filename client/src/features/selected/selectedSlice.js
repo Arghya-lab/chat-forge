@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import socketEventEnum from "../../socketEventEnum";
+import socket from "../../utils/socket";
 
 const initialState = {
   server: {
@@ -10,7 +12,12 @@ const initialState = {
     text: [],
     voice: [],
     video: [],
-  }, //  [ { id, name } ]
+  }, //  [ { id, name, type } ]
+  selectedChannel: {
+    id: "",
+    name: "",
+    type: "",
+  },
 };
 
 export const selectedSlice = createSlice({
@@ -20,19 +27,16 @@ export const selectedSlice = createSlice({
     setSelected: (state, action) => {
       const { server, channels } = action.payload;
       state.server = server;
-      let sortedChannels = { text: [], voice: [], video: [], };
+      let sortedChannels = { text: [], voice: [], video: [] };
       channels.forEach((channel) => {
         switch (channel.type) {
           case "text":
-            delete channel.type;
             sortedChannels.text.push(channel);
             break;
           case "voice":
-            delete channel.type;
             sortedChannels.voice.push(channel);
             break;
           case "video":
-            delete channel.type;
             sortedChannels.video.push(channel);
             break;
           default:
@@ -41,10 +45,16 @@ export const selectedSlice = createSlice({
         }
       });
       state.channels = sortedChannels;
+      state.selectedChannel = sortedChannels.text[0];
+      socket.emit(socketEventEnum.JOIN_ROOM_EVENT, state.selectedChannel?.id)
+    },
+    setSelectedChannel: (state, action) => {
+      state.selectedChannel = action.payload;
+      socket.emit(socketEventEnum.JOIN_ROOM_EVENT, state.selectedChannel?.id)
     },
   },
 });
 
-export const { setSelected } = selectedSlice.actions;
+export const { setSelected, setSelectedChannel } = selectedSlice.actions;
 
 export default selectedSlice.reducer;

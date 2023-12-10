@@ -1,7 +1,14 @@
 import axios from "axios";
 const api = import.meta.env.VITE_API_BASE_URL;
 
-const { token } = JSON.parse(localStorage.getItem("chatForge")).auth;
+// const token = JSON.parse(localStorage.getItem("chatForge")).auth.token || null;
+let token = null;
+
+const storedData = localStorage.getItem("chatForge");
+if (storedData) {
+  const parsedData = JSON.parse(storedData);
+  token = parsedData?.auth?.token || null;
+}
 
 const instance = axios.create({
   baseURL: api,

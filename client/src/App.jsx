@@ -1,11 +1,11 @@
-import "./app.css";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 import AuthPage from "./Components/Auth/AuthPage";
 import HomePage from "./Components/HomePage";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
 import RequireAuth from "./Components/Auth/RequireAuth";
 import ServerInvite from "./Components/ServerInvite";
+import "./app.css";
 
 function App() {
   const { selectedMode } = useSelector((state) => state.info); // 0 -> auto, 1 -> light, 2-> dark

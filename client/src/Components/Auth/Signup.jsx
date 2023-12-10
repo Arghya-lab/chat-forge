@@ -24,11 +24,11 @@ function Signup() {
       displayName: Yup.string()
         .required("Display name is required")
         .min(5, "Display name must be at least 5 characters")
-        .max(16, "Display name should not exceed 16 characters"),
+        .max(12, "Display name should not exceed 12 characters"),
       userName: Yup.string()
         .required("User name is required")
-        .min(8, "User name must be at least 8 characters")
-        .max(16, "User name should not exceed 16 characters"),
+        .min(7, "User name must be at least 7 characters")
+        .max(12, "User name should not exceed 12 characters"),
       password: Yup.string()
         .required("Password is required")
         .min(6, "Password must be at least 6 characters")

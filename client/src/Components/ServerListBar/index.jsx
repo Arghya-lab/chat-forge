@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios, { authHeader } from "../utils/axios";
+import axios, { authHeader } from "../../utils/axios";
 import {
   MessageSquare,
   MessageSquareDashed,
@@ -9,11 +9,11 @@ import {
   Sun,
   SunMoon,
 } from "lucide-react";
-import { setSelectedMode } from "../features/info/infoSlice";
+import { setSelectedMode } from "../../features/info/infoSlice";
 import { Tooltip } from "@material-tailwind/react";
 import CreateServerForm from "./CreateServerModal";
-import { setServers } from "../features/servers/serversSlice";
-import { setSelected } from "../features/selected/selectedSlice";
+import { setServers } from "../../features/servers/serversSlice";
+import { setSelected } from "../../features/selected/selectedSlice";
 
 const modes = [
   {

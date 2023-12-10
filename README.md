@@ -7,8 +7,8 @@ Chat Forge is a Discord clone.
 - [x] User authentication
 - [x] Creation and Joining Servers
 - [x] Unique invite link generation & full working invite system
-- [ ] Creation of Channels in a Server
-- [ ] Real time messaging using Socket IO
+- [x] Creation of Channels in a Server
+- [x] Real time messaging using Socket IO
 - [ ] Timestamps for messages
 - [ ] Create Text, Audio and Video call Channels
 - [ ] Delete & Edit messages in real time for all users

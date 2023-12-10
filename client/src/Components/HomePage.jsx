@@ -1,5 +1,6 @@
-import ChannelListBar from "./ChannelListBar";
 import ServerListBar from "./ServerListBar";
+import ChannelListBar from "./ChannelListBar";
+import ChatContainer from "./ChatContainer";
 
 function HomePage() {
   return (
@@ -8,7 +9,7 @@ function HomePage() {
       style={{ gridTemplateColumns: "72px 240px 1fr" }}>
       <ServerListBar />
       <ChannelListBar />
-      <div className="h-screen">Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident eius id illum excepturi libero dignissimos doloremque, esse delectus nemo fugit rerum itaque ratione quas, aliquid unde cupiditate, qui harum cumque!</div>
+      <ChatContainer />
     </div>
   );
 }

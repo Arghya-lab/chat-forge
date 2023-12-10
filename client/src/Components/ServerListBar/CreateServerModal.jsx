@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios, { multipartHeader } from "../utils/axios";
+import axios, { multipartHeader } from "../../utils/axios";
 import {
   Button,
   Dialog,
@@ -11,8 +11,8 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { X } from "lucide-react";
-import AvatarImgDrop from "./AvatarImgDrop";
-import { addServer } from "../features/servers/serversSlice";
+import AvatarImgDrop from "../AvatarImgDrop";
+import { addServer } from "../../features/servers/serversSlice";
 
 function CreateServerModal({
   openCreateServerForm,
