@@ -1,8 +1,8 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Laugh, PlusCircle, SendHorizontal } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import axios, { authHeader } from "../../utils/axios";
+import { Laugh, PlusCircle, SendHorizontal } from "lucide-react";
 
 function ChatInput() {
   const dispatch = useDispatch();
@@ -10,21 +10,21 @@ function ChatInput() {
 
   const formik = useFormik({
     initialValues: {
-      textContent: "",
+      content: "",
     },
     validationSchema: Yup.object({
-      textContent: Yup.string()
+      content: Yup.string()
         .trim()
         .required()
         .min(1)
         .max(280, "Can't send more than 280 characters"),
     }),
     onSubmit: async (values) => {
-      // dispatch(sendSocketMessage(values.textContent))
+      // dispatch(sendSocketMessage(values.content))
       const res = await axios.post(
         `/message/${selectedChannel?.id}`,
         {
-          content: values.textContent,
+          content: values.content,
         },
         authHeader
       );
@@ -43,16 +43,16 @@ function ChatInput() {
       </div>
       <input
         className="flex-1 bg-pearl-300 dark:bg-gray-800 rounded-lg border-none py-2 h-11 text-shadow-200 dark:text-pearl-50 focus:outline-none"
-        id="textContent"
-        name="textContent"
+        id="content"
+        name="content"
         maxLength={280}
         minLength={1}
         autoComplete="off"
-        placeholder="Message #  | Gamers zone"
+        placeholder={`Message #  | ${selectedChannel?.name || ""}`}
         type="text"
         onChange={formik.handleChange}
-        value={formik.values.textContent}
-        {...formik.getFieldProps("textContent")}
+        value={formik.values.content}
+        {...formik.getFieldProps("content")}
       />
       <div className="p-2 cursor-pointer text-gray-700 dark:text-neutral-400 hover:text-yellow-900 dark:hover:text-orange-600">
         <Laugh />

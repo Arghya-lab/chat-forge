@@ -1,5 +1,8 @@
 const Channel = require("../models/Channel");
+const Member = require("../models/Member");
 const Message = require("../models/Message");
+const Server = require("../models/Server");
+const User = require("../models/User");
 const { emitSocketEvent } = require("../socket");
 const eventEnum = require("../socket/eventEnum");
 
@@ -12,7 +15,7 @@ const createMessage = async (req, res) => {
     const { userId } = req.user;
 
     if (!(await Channel.findById(roomId))) {
-      res.status(404).send("Chat does not exist");
+      return res.status(404).send("Chat doesn't exist");
     }
 
     const newMessage = await Message.create({
@@ -20,10 +23,25 @@ const createMessage = async (req, res) => {
       senderId: userId,
       channelId: roomId,
     });
-    // emit the new message event to the other participants with newMessage as the payload
-    emitSocketEvent(req, roomId, eventEnum.MESSAGE_RECEIVED_EVENT, newMessage);
 
-    res.status(201).json({ newMessage });
+    const sender = await User.findById(userId).select("displayName imgUrl");
+    const data = {
+      id: newMessage._id,
+      content: newMessage.content,
+      fileUrl: newMessage.fileUrl,
+      channelId: newMessage.channelId,
+      deleted: newMessage.deleted,
+      createdAt: newMessage.createdAt,
+      updatedAt: newMessage.updatedAt,
+      senderId: newMessage.senderId,
+      senderName: sender.displayName,
+      senderDp: sender.imgUrl,
+    };
+
+    // emit the new message event to the other participants with newMessage as the payload
+    emitSocketEvent(req, roomId, eventEnum.MESSAGE_RECEIVED_EVENT, data);
+
+    res.status(201).json(data);
   } catch (error) {
     return res.status(500).send("Error occur while saving message.");
   }
@@ -33,7 +51,51 @@ const createMessage = async (req, res) => {
 //  get all messages of a user
 const getMessages = async (req, res) => {
   try {
-  } catch (error) {}
+    const { roomId } = req.params;
+    const { userId } = req.user;
+
+    //  if user not exist
+    if (!(await User.findById(userId)))
+      return res.status(404).send("User doesn't exist.");
+
+    //  if channel or conversation not exist
+    const channel = await Channel.findById(roomId);
+    if (!channel) return res.status(404).send("Chat room doesn't exist.");
+
+    //  if user not joined in server
+    if (!(await Member.find({ serverId: channel.serverId, userId })))
+      return res.status(404).send("User not present in the server.");
+
+    const messages = await Message.find({ channelId: roomId })
+      .sort({ createdAt: 1 })
+      .skip(0)
+      .limit(20);
+
+    const data = await Promise.all(
+      messages.map(async (message) => {
+        const sender = await User.findById(message.senderId).select(
+          "displayName imgUrl"
+        );
+        return {
+          id: message._id,
+          content: message.content,
+          fileUrl: message.fileUrl,
+          channelId: message.channelId,
+          deleted: message.deleted,
+          createdAt: message.createdAt,
+          updatedAt: message.updatedAt,
+          senderId: message.senderId,
+          senderName: sender.displayName,
+          senderDp: sender.imgUrl,
+        };
+      })
+    );
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Error occur while fetching message.");
+  }
 };
 
 module.exports = { createMessage, getMessages };

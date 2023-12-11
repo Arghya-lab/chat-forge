@@ -10,7 +10,6 @@ export const socketSlice = createSlice({
   initialState,
   reducers: {
     onConnect: (state) => {
-      console.log("connected");
       state.status = "connected";
     },
     onDisconnect: (state) => {
@@ -20,7 +19,6 @@ export const socketSlice = createSlice({
       state.status = "error";
     },
     onMessageReceived: (state, action) => {
-      console.log(action.payload);
       state.messages = [action.payload, ...state.messages];
     },
   },

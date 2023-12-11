@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import socketEventEnum from "../../socketEventEnum";
-import socket from "../../utils/socket";
+import { socket } from "../../Components/HomePage";
 
 const initialState = {
   server: {
