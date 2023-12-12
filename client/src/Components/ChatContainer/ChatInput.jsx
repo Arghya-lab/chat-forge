@@ -1,8 +1,8 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import axios, { authHeader } from "../../utils/axios";
 import { Laugh, PlusCircle, SendHorizontal } from "lucide-react";
+import { sendMessage } from "../../features/selected/selectedSlice";
 
 function ChatInput() {
   const dispatch = useDispatch();
@@ -20,16 +20,7 @@ function ChatInput() {
         .max(280, "Can't send more than 280 characters"),
     }),
     onSubmit: async (values) => {
-      // dispatch(sendSocketMessage(values.content))
-      const res = await axios.post(
-        `/message/${selectedChannel?.id}`,
-        {
-          content: values.content,
-        },
-        authHeader
-      );
-      console.log(res.data);
-
+      dispatch(sendMessage(values));
       formik.resetForm();
     },
   });

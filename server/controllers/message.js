@@ -1,7 +1,6 @@
 const Channel = require("../models/Channel");
 const Member = require("../models/Member");
 const Message = require("../models/Message");
-const Server = require("../models/Server");
 const User = require("../models/User");
 const { emitSocketEvent } = require("../socket");
 const eventEnum = require("../socket/eventEnum");
@@ -24,7 +23,8 @@ const createMessage = async (req, res) => {
       channelId: roomId,
     });
 
-    const sender = await User.findById(userId).select("displayName imgUrl");
+    const sender = await User.findById(userId);
+
     const data = {
       id: newMessage._id,
       content: newMessage.content,
@@ -36,6 +36,7 @@ const createMessage = async (req, res) => {
       senderId: newMessage.senderId,
       senderName: sender.displayName,
       senderDp: sender.imgUrl,
+      senderAvatarColor: sender.avatarColor,
     };
 
     // emit the new message event to the other participants with newMessage as the payload
@@ -67,15 +68,14 @@ const getMessages = async (req, res) => {
       return res.status(404).send("User not present in the server.");
 
     const messages = await Message.find({ channelId: roomId })
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .skip(0)
       .limit(20);
 
     const data = await Promise.all(
       messages.map(async (message) => {
-        const sender = await User.findById(message.senderId).select(
-          "displayName imgUrl"
-        );
+        const sender = await User.findById(message.senderId);
+
         return {
           id: message._id,
           content: message.content,
@@ -87,6 +87,7 @@ const getMessages = async (req, res) => {
           senderId: message.senderId,
           senderName: sender.displayName,
           senderDp: sender.imgUrl,
+          senderAvatarColor: sender.avatarColor,
         };
       })
     );

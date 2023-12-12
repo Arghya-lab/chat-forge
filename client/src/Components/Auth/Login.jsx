@@ -2,9 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "../../utils/axios";
 import { Button } from "@material-tailwind/react";
-import { setAuth } from "../../features/auth/authSlice";
+import { setLogin } from "../../features/auth/authSlice";
 
 function Login() {
   const dispatch = useDispatch();
@@ -25,13 +24,8 @@ function Login() {
         .max(20, "Password should not exceed 20 characters"),
     }),
     onSubmit: async (values) => {
-      try {
-        const res = await axios.post("/auth/login", values);
-        dispatch(setAuth(res.data));
-        navigate("/", { replace: true }); //  Use { replace: true } so we don't create another entry in the history stack for the login page.
-      } catch (error) {
-        console.log(error.message);
-      }
+      dispatch(setLogin(values));
+      navigate("/", { replace: true }); //  Use { replace: true } so we don't create another entry in the history stack for the login page.
     },
   });
 

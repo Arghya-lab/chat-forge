@@ -3,16 +3,16 @@ import PropTypes from "prop-types";
 import { ChevronDown, X } from "lucide-react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios, { authHeader } from "../../utils/axios";
 import { Button } from "@material-tailwind/react";
-
-const serverId = "656da200c8365be8804253f8";
+import { useDispatch } from "react-redux";
+import { createChannel } from "../../features/selected/selectedSlice";
 
 function CreateChannelModal({
   openCreateChannelModal,
   setOpenCreateChannelModal,
 }) {
   const modalRef = useRef(null);
+  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues: {
@@ -27,12 +27,7 @@ function CreateChannelModal({
       type: Yup.string().required("Channel type is required."),
     }),
     onSubmit: async (values) => {
-      try {
-        const res = await axios.post(`/channel/create/${serverId}`, values, authHeader);
-        console.log(res.data);
-      } catch (error) {
-        console.log(error.message);
-      }
+      dispatch(createChannel(values));
     },
   });
 

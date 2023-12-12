@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   status: "disconnect",
-  messages: [],
 };
 
 export const socketSlice = createSlice({
@@ -18,12 +17,9 @@ export const socketSlice = createSlice({
     onError: (state) => {
       state.status = "error";
     },
-    onMessageReceived: (state, action) => {
-      state.messages = [action.payload, ...state.messages];
-    },
   },
 });
 
-export const { onConnect, onDisconnect, onError, onMessageReceived } = socketSlice.actions;
+export const { onConnect, onDisconnect, onError } = socketSlice.actions;
 
 export default socketSlice.reducer;

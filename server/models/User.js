@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    avatarColor: {
+      type: String,
+    },
     // conversations: {
     //   type: [{
     //     type: mongoose.Schema.Types.ObjectId,

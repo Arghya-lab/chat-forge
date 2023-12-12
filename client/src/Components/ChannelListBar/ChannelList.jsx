@@ -1,20 +1,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AudioWaveform, ChevronRight, Hash, Video } from "lucide-react";
-import { setSelectedChannel } from "../../features/selected/selectedSlice";
-import axios, { authHeader } from "../../utils/axios";
+import { selectChannel } from "../../features/selected/selectedSlice";
 
 function ChannelList() {
   const { channels, selectedChannel } = useSelector((state) => state.selected); //  { [text], [voice], [video] } => [ id, name, type ]
   const dispatch = useDispatch();
 
   const handleChannelClick = async (channel) => {
-    try {
-      const res = await axios.get(`/message/${channel.id}`, authHeader);
-      console.log(res.data);
-      dispatch(setSelectedChannel(channel));
-    } catch (error) {
-      console.log(error.message);
-    }
+    dispatch(selectChannel(channel));
   };
 
   return (

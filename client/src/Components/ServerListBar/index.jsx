@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import axios, { authHeader } from "../../utils/axios";
 import {
   MessageSquare,
   MessageSquareDashed,
@@ -12,8 +11,11 @@ import {
 import { setSelectedMode } from "../../features/info/infoSlice";
 import { Tooltip } from "@material-tailwind/react";
 import CreateServerForm from "./CreateServerModal";
-import { setServers } from "../../features/servers/serversSlice";
-import { setSelected } from "../../features/selected/selectedSlice";
+import { getUserServers } from "../../features/servers/serversSlice";
+import {
+  selectChannel,
+  selectServer,
+} from "../../features/selected/selectedSlice";
 
 const modes = [
   {
@@ -52,30 +54,25 @@ function ServerListBar() {
   };
 
   const handleDirectMessageClick = () => {
-    dispatch(setSelected({ server: {id: "myself", name: "myself", imgUrl: ""}, channels: [] }))
-    setSelectedItem("directMessage")
+    // dispatch(
+    //   setSelected({
+    //     server: { id: "myself", name: "myself", imgUrl: "" },
+    //     channels: [],
+    //   })
+    // );
+    // setSelectedItem("directMessage");
+    console.log("directMessage btn clicked");
   };
 
   const handleServerBtnClick = async (server) => {
-    try {
-      const res = await axios.get(`/channel/${server.id}`, authHeader);
-      dispatch(setSelected({ server, channels: res.data }))
-      setSelectedItem(server.id)
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
+    dispatch(selectServer(server))
+    .then(() => {dispatch(selectChannel())});
+    setSelectedItem(server.id);
+  };
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res = await axios.get("/server", authHeader);
-        dispatch(setServers(res.data));
-      } catch (error) {
-        console.log(error.message);
-      }
-    })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    dispatch(getUserServers())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -122,7 +119,7 @@ function ServerListBar() {
             className="mb-3 w-full flex items-center justify-center relative cursor-pointer"
             onPointerEnter={() => setHoverItem(server.id)}
             onPointerLeave={() => setHoverItem(null)}
-            onClick={()=>handleServerBtnClick(server)}>
+            onClick={() => handleServerBtnClick(server)}>
             <div
               className={`w-1 rounded-r-md bg-neutral-700 dark:bg-neutral-200 absolute left-0 transition-height duration-300 ease-in-out ${
                 selectedItem === server.id

@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios, { multipartHeader } from "../../utils/axios";
 import {
   Button,
   Dialog,
@@ -12,7 +11,7 @@ import {
 } from "@material-tailwind/react";
 import { X } from "lucide-react";
 import AvatarImgDrop from "../AvatarImgDrop";
-import { addServer } from "../../features/servers/serversSlice";
+import { createServer } from "../../features/servers/serversSlice";
 
 function CreateServerModal({
   openCreateServerForm,
@@ -49,20 +48,14 @@ function CreateServerModal({
         .max(20, "Server name should not exceed 20 characters"),
     }),
     onSubmit: async (values) => {
-      try {
-        if (!serverAvatar) {
-          return setImgDropError("Images not uploaded");
-        }
-        const formData = new FormData();
-        formData.append("name", values.name);
-        formData.append("serverAvatar", serverAvatar);
-        const res = await axios.post("/server/create", formData, multipartHeader);
-        dispatch(addServer(res.data));
-        handleModalClose();
-      } catch (error) {
-        console.log(error.message);
-        handleModalClose();
-      }
+      if (!serverAvatar) return setImgDropError("Images not uploaded");
+
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("serverAvatar", serverAvatar);
+
+      dispatch(createServer(formData));
+      handleModalClose();
     },
   });
 

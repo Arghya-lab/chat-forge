@@ -2,8 +2,7 @@ import { useRef } from "react";
 import PropTypes from "prop-types";
 import axios, { authHeader } from "../../utils/axios";
 import { X } from "lucide-react";
-
-const serverId = "656da200c8365be8804253f8";
+import { useSelector } from "react-redux";
 
 function InviteLinkModal({
   openLinkModal,
@@ -11,6 +10,8 @@ function InviteLinkModal({
   inviteCode,
   setInviteCode,
 }) {
+  const serverId = useSelector(state=>state.selected.server?.id)
+
   const modalRef = useRef(null);
   const linkRef = useRef(null);
   const copyBtnRef = useRef(null);

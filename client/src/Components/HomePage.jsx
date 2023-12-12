@@ -9,8 +9,8 @@ import {
   onConnect,
   onDisconnect,
   onError,
-  onMessageReceived,
 } from "../features/socket/socketSlice";
+import { addMessage } from "../features/selected/selectedSlice";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const socket = initializeSocketClient();
@@ -29,7 +29,7 @@ function HomePage() {
     socket.on(socketEventEnum.SOCKET_ERROR_EVENT, () => dispatch(onError()));
     //  new message receive in current room listener
     socket.on(socketEventEnum.MESSAGE_RECEIVED_EVENT, (message) =>
-      dispatch(onMessageReceived(message))
+      dispatch(addMessage(message))
     );
     return () => {
       socket.on(socketEventEnum.CONNECTED_EVENT, () => dispatch(onConnect()));
@@ -41,7 +41,7 @@ function HomePage() {
       socket.on(socketEventEnum.SOCKET_ERROR_EVENT, () => dispatch(onError()));
       //  new message receive in current room listener
       socket.on(socketEventEnum.MESSAGE_RECEIVED_EVENT, (message) =>
-        dispatch(onMessageReceived(message))
+        dispatch(addMessage(message))
       );
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
