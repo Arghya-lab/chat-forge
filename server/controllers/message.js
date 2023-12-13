@@ -54,6 +54,8 @@ const getMessages = async (req, res) => {
   try {
     const { roomId } = req.params;
     const { userId } = req.user;
+    const { firstMsgIdx = 0 } = req.query;
+    const perPageMsgQty = 30;
 
     //  if user not exist
     if (!(await User.findById(userId)))
@@ -69,8 +71,8 @@ const getMessages = async (req, res) => {
 
     const messages = await Message.find({ channelId: roomId })
       .sort({ createdAt: -1 })
-      .skip(0)
-      .limit(20);
+      .skip(firstMsgIdx)
+      .limit(perPageMsgQty);
 
     const data = await Promise.all(
       messages.map(async (message) => {
@@ -92,7 +94,11 @@ const getMessages = async (req, res) => {
       })
     );
 
-    res.status(200).json(data);
+    const totalMessage = await Message.find({
+      channelId: roomId,
+    }).countDocuments();
+
+    res.status(200).json({ messages: data, totalMessage });
   } catch (error) {
     console.log(error);
     return res.status(500).send("Error occur while fetching message.");

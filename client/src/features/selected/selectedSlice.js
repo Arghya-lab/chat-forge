@@ -17,7 +17,11 @@ const selectChannel = createAsyncThunk(
   "selected/selectChannel",
   async (channel = store.getState().selected.channels.text[0] || null) => {
     const res = await axios.get(`/message/${channel?.id}`, authHeader);
-    return { channel, messages: res.data };
+    return {
+      channel,
+      messages: res.data?.messages,
+      totalMessage: res.data?.totalMessage,
+    };
   }
 );
 
@@ -42,6 +46,20 @@ const sendMessage = createAsyncThunk("selected/sendMessage", async (data) => {
   return res.data;
 });
 
+const addMessages = createAsyncThunk(
+  "selected/addMessages",
+  async () => {
+    const res = await axios.get(
+      `/message/${store.getState().selected.selectedChannel.id}?firstMsgIdx=${store.getState().selected.messages.length}`,
+      authHeader
+    );
+    return {
+      messages: res.data?.messages,
+      totalMessage: res.data?.totalMessage,
+    };
+  }
+);
+
 const initialState = {
   server: {
     id: "",
@@ -59,6 +77,7 @@ const initialState = {
     type: "",
   },
   messages: [],
+  totalMessage: 0,
 };
 
 export const selectedSlice = createSlice({
@@ -67,6 +86,7 @@ export const selectedSlice = createSlice({
   reducers: {
     addMessage: (state, action) => {
       state.messages.unshift(action.payload);
+      state.totalMessage += 1;
     },
   },
   extraReducers: (builder) => {
@@ -75,6 +95,7 @@ export const selectedSlice = createSlice({
     builder.addCase(selectServer.fulfilled, (state, action) => {
       //remove previous room
       state.messages = [];
+      state.totalMessage = 0;
       const { server, channels } = action.payload;
       state.server = server;
 
@@ -104,9 +125,11 @@ export const selectedSlice = createSlice({
     //  change selected channel of the server
     builder.addCase(selectChannel.fulfilled, (state, action) => {
       //  remove previous joined room
-      const { channel, messages } = action.payload;
+      const { channel, messages, totalMessage } = action.payload;
       state.selectedChannel = channel;
       state.messages = messages;
+      state.totalMessage = totalMessage;
+      //  after getting all messages join the room
       socket.emit(socketEventEnum.JOIN_ROOM_EVENT, state.selectedChannel?.id);
       //  handle on get message event
     });
@@ -137,14 +160,23 @@ export const selectedSlice = createSlice({
 
     //  add new send message by user
     builder.addCase(sendMessage.fulfilled, (state, action) => {
-      state.messages.unshift(action.payload);
+      console.log(action.payload);
     });
     builder.addCase(sendMessage.rejected, (state, action) => {
+      console.log(action.error.message);
+    });
+
+    //  add more message by user
+    builder.addCase(addMessages.fulfilled, (state, action) => {
+      state.messages = [...state.messages, ...action.payload.messages];
+      state.totalMessage = action.payload.totalMessage;
+    });
+    builder.addCase(addMessages.rejected, (state, action) => {
       console.log(action.error.message);
     });
   },
 });
 
 export const { addMessage } = selectedSlice.actions;
-export { selectServer, selectChannel, createChannel, sendMessage };
+export { selectServer, selectChannel, createChannel, sendMessage, addMessages };
 export default selectedSlice.reducer;

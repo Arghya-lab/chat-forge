@@ -1,21 +1,44 @@
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import InfiniteScroll from "react-infinite-scroll-component";
 import MessageItem from "./MessageItem";
-import { useState } from "react";
+import { addMessages } from "../../features/selected/selectedSlice";
+import ChatWelcome from "./ChatWelcome";
 
 function ChatMessages() {
-  const { messages } = useSelector((state) => state.selected);
-  const [hoverMessage, setHoverMessage] = useState(null);
+  const dispatch = useDispatch();
+  const { messages, totalMessage } = useSelector((state) => state.selected);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    setHasMore(messages.length != totalMessage);
+  }, [messages.length, totalMessage]);
 
   return (
-    <div className="flex-1 overflow-y-scroll no-scrollbar">
-      {messages.length !== 0 ? (
-        messages.map((message, index) => {
-          return (
-            <div
-              key={message.id}
-              onPointerEnter={() => setHoverMessage(message.id)}
-              onPointerLeave={() => setHoverMessage(null)}>
+    <div
+      id="scrollableDiv"
+      className={`flex-1 flex flex-col-reverse py-4 bg-pearl-50 dark:bg-shadow-200 overflow-auto white-scrollbar dark:black-scrollbar`}>
+      <InfiniteScroll
+        dataLength={messages.length}
+        next={() => dispatch(addMessages())}
+        style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
+        inverse={true} //
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+        scrollableTarget="scrollableDiv"
+        endMessage={<ChatWelcome />}>
+        {messages.length !== 0 ? (
+          messages.map((message, index) => {
+            let sameUserAsPrevious = false;
+            if (messages.length === index + 1) {
+              sameUserAsPrevious = false;
+            } else {
+              sameUserAsPrevious =
+                message?.senderId === messages[index + 1]?.senderId;
+            }
+            return (
               <MessageItem
+                key={message.id}
                 content={message.content}
                 deleted={message.deleted}
                 createdAt={message.createdAt}
@@ -24,18 +47,14 @@ function ChatMessages() {
                 senderId={message.senderId}
                 senderDp={message.senderDp}
                 senderAvatarColor={message.senderAvatarColor}
-                sameUserAsPrevious={
-                  index !== 0 &&
-                  message.senderId === messages[index - 1].senderId
-                }
-                isHover={hoverMessage === message.id}
+                sameUserAsPrevious={sameUserAsPrevious}
               />
-            </div>
-          );
-        })
-      ) : (
-        <p>No messages started yet</p>
-      )}
+            );
+          })
+        ) : (
+          <p>No messages started yet</p>
+        )}
+      </InfiniteScroll>
     </div>
   );
 }
