@@ -23,7 +23,7 @@ const messageSchema = new mongoose.Schema(
     deleted: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   { timestamps: true }
 );

@@ -1,6 +1,7 @@
 const Member = require("../models/Member");
 const Server = require("../models/Server");
 const ShortUniqueId = require("short-unique-id");
+const User = require("../models/User");
 
 //    ----------  CREATE  ----------     //
 //  creating a new server
@@ -21,7 +22,7 @@ const createServer = async (req, res) => {
     await Server.findByIdAndUpdate(newServer._id, {
       $push: { members: newMember._id },
     });
-    res.status(201).json({ id: newServer._id, name, imgUrl });
+    res.status(201).json({ id: newServer._id, name, imgUrl, userRole: newMember.role });
   } catch (error) {
     res.status(500).json({ error: "Error occur while creating server." });
   }
@@ -52,12 +53,15 @@ const createInviteLink = async (req, res) => {
 const getServers = async (req, res) => {
   try {
     const { userId } = req.user;
+    if (!(await User.findById(userId)))
+      return res.status(404).send("User not found");
+
     const members = await Member.find({ userId });
     const data = await Promise.all(
       members.map(async (member) => {
         const serverInfo = await Server.findById(member.serverId);
         const { _id, name, imgUrl } = serverInfo;
-        return { id: _id, name, imgUrl };
+        return { id: _id, name, imgUrl, userRole: member.role };
       })
     );
     res.status(201).json(data);
@@ -70,13 +74,16 @@ const getServers = async (req, res) => {
 const getInviteLink = async (req, res) => {
   try {
     const { userId } = req.user;
+    if (!(await User.findById(userId)))
+      return res.status(404).send("User not found");
+
     const { serverId } = req.params;
     const member = await Member.findOne({ userId, serverId });
-    if (!member) {
+    if (!member)
       return res.status(400).json({
         error: "You are unauthorize to get data.",
       });
-    }
+
     const { inviteCode } = await Server.findById(serverId);
     res.status(201).json({ inviteCode });
   } catch (error) {
@@ -89,6 +96,9 @@ const getInviteLink = async (req, res) => {
 const addMember = async (req, res) => {
   try {
     const { userId } = req.user;
+    if (!(await User.findById(userId)))
+      return res.status(404).send("User not found");
+
     const { inviteCode } = req.params;
     const server = await Server.findOne({ inviteCode });
     if (!server) {
@@ -97,11 +107,11 @@ const addMember = async (req, res) => {
       });
     }
 
-    if (await Member.findOne({ userId, serverId: server._id })) {
+    if (await Member.findOne({ userId, serverId: server._id }))
       return res
         .status(200)
         .json({ id: server._id, name: server.name, imgUrl: server.imgUrl });
-    }
+
     const newMember = await Member.create({
       userId,
       serverId: server._id,

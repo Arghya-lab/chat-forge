@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@material-tailwind/react";
 import { useDispatch } from "react-redux";
-import { createChannel } from "../../features/selected/selectedSlice";
+import { createChannel } from "../../features/channel/channelSlice";
 
 function CreateChannelModal({
   openCreateChannelModal,

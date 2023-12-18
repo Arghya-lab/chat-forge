@@ -2,7 +2,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { Laugh, PlusCircle, SendHorizontal } from "lucide-react";
-import { sendMessage } from "../../features/selected/selectedSlice";
+import { sendMessage } from "../../features/message/messageSlice";
 
 function ChatInput() {
   const dispatch = useDispatch();

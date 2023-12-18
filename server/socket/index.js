@@ -1,5 +1,5 @@
 const eventEnum = require("./eventEnum");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 require("dotenv").config();
 
@@ -30,11 +30,16 @@ const initializeSocketIO = (io) => {
         socket.user?.userId
       );
 
+      let prevRoom;
       socket.on(eventEnum.JOIN_ROOM_EVENT, (roomId) => {
+        //  if user previously joined a room then leave previous room
+        if (prevRoom) {
+          socket.leave(prevRoom);
+        }
         console.log(`User joined the room.🎪 roomId: `, roomId);
-        // joining the room with the roomId will allow specific events to be fired.
-        // When user types we don't want to emit that event to specific participant. User will get live message in the room.
+        // joining the room with the roomId will allow specific events to be fired. User will get live message in the room.
         socket.join(roomId);
+        prevRoom = roomId;
       });
 
       socket.on(eventEnum.DISCONNECT_EVENT, () => {

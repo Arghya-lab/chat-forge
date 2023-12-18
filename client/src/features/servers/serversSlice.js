@@ -21,7 +21,7 @@ const createServer = createAsyncThunk(
 );
 
 const initialState = {
-  servers: [], // [ { id, name, imgUrl } ]
+  servers: [], // [ { id, name, imgUrl, userRole } ]
 };
 
 export const serversSlice = createSlice({

@@ -28,6 +28,7 @@ const signupUser = async (req, res) => {
       );
 
       res.status(201).json({
+        id: user._id,
         displayName,
         userName,
         imgUrl: "",
@@ -56,6 +57,7 @@ const loginUser = async (req, res) => {
       );
 
       res.status(200).json({
+        id: user._id,
         displayName: user.displayName,
         userName: user.userName,
         imgUrl: user.imgUrl,

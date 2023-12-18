@@ -1,19 +1,28 @@
 const express = require("express");
 const fetchUser = require("../middleware/fetchUser");
-const { createMessage, getMessages,  } = require("../controllers/message");
+const {
+  createMessage,
+  getMessages,
+  editMessage,
+  deleteMessage,
+} = require("../controllers/message");
 
 const router = express.Router();
 
 //          ---------------  CREATE  ---------------         //
-// create message using : POST api/message/:roomId
-router.post("/:roomId", fetchUser, createMessage);
+// create message using : POST api/message/:channelId
+router.post("/:channelId", fetchUser, createMessage);
 
 //          ---------------  READ  ---------------         //
-// fetch all messages of room using : GET api/message/:roomId
-router.get("/:roomId", fetchUser, getMessages);
+// fetch all messages of room using : GET api/message/:channelId
+router.get("/:channelId", fetchUser, getMessages);
 
 //          ---------------  UPDATE  ---------------         //
+// edit a message : PATCH api/message/edit/:messageId
+router.patch("/edit/:messageId", fetchUser, editMessage);
 
 //          ---------------  DELETE  ---------------         //
+// mark as delete message : PATCH api/message/delete/:messageId
+router.patch("/delete/:messageId", fetchUser, deleteMessage);
 
 module.exports = router;

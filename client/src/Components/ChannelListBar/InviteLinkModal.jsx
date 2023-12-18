@@ -10,7 +10,8 @@ function InviteLinkModal({
   inviteCode,
   setInviteCode,
 }) {
-  const serverId = useSelector(state=>state.selected.server?.id)
+  const serverId = useSelector((state) => state.selected.server?.id);
+  const { server } = useSelector((state) => state.selected);
 
   const modalRef = useRef(null);
   const linkRef = useRef(null);
@@ -61,7 +62,7 @@ function InviteLinkModal({
 
   return (
     <div
-      className={`absolute top-0 left-0 bottom-0 right-0 bg-black bg-opacity-80 flex items-center justify-center ${
+      className={`absolute z-50 top-0 left-0 bottom-0 right-0 bg-black bg-opacity-80 flex items-center justify-center ${
         openLinkModal ? "block" : "hidden"
       }`}
       onClick={(e) => {
@@ -74,7 +75,7 @@ function InviteLinkModal({
         className="w-[448px] bg-pearl-200 dark:bg-neutral-800 rounded-md">
         <div className="relative">
           <h5 className="text-lg font-semibold p-4 text-neutral-900 dark:text-pearl-100">
-            Invite friends to CraftyMines
+            Invite friends to {server.name}
           </h5>
           <div
             className="absolute right-4 top-4 text-neutral-400 cursor-pointer hover:text-neutral-800 dark:hover:text-neutral-100"
@@ -102,23 +103,28 @@ function InviteLinkModal({
                 Copy
               </button>
             </div>
-            <div className="flex mt-4 mb-2 items-center bg-pearl-600 dark:bg-shadow-900 p-1 rounded">
-              <p className="text-md pl-2 flex-grow rounded-sm bg-pearl-600 dark:bg-shadow-900 text-neutral-900 dark:text-pearl-500 focus:outline-none">
-                Generate new invite link
-              </p>
-              <button
-                className="px-4 h-8 bg-yellow-900 hover:bg-yellow-800 text-pearl-50 text-sm rounded"
-                ref={generateBtnRef}
-                onClick={handleLinkGenerate}>
-                Generate
-              </button>
-            </div>
-            <p className="text-xs dark:text-pearl-800">
-              <span className="text-base text-red-700 font-semibold">
-                Caution:
-              </span>
-              &nbsp; if you generate new invite link the old link will not work.
-            </p>
+            {["admin", "moderator"].includes(server.userRole) ? (
+              <>
+                <div className="flex mt-4 mb-2 items-center bg-pearl-600 dark:bg-shadow-900 p-1 rounded">
+                  <p className="text-md pl-2 flex-grow rounded-sm bg-pearl-600 dark:bg-shadow-900 text-neutral-900 dark:text-pearl-500 focus:outline-none">
+                    Generate new invite link
+                  </p>
+                  <button
+                    className="px-4 h-8 bg-yellow-900 hover:bg-yellow-800 text-pearl-50 text-sm rounded"
+                    ref={generateBtnRef}
+                    onClick={handleLinkGenerate}>
+                    Generate
+                  </button>
+                </div>
+                <p className="text-xs dark:text-pearl-800">
+                  <span className="text-base text-red-700 font-semibold">
+                    Caution:
+                  </span>
+                  &nbsp; if you generate new invite link the old link will not
+                  work.
+                </p>
+              </>
+            ) : null}
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ const setSignup = createAsyncThunk("users/setSignup", async (data) => {
 });
 
 const initialState = {
+  id: "",
   displayName: "",
   userName: "",
   imgUrl: "",
@@ -28,15 +29,31 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(setLogin.fulfilled, (state, action) => {
-      const { displayName, userName, imgUrl, avatarColor, token } = action.payload;
-      Object.assign(state, { displayName, userName, imgUrl, avatarColor, token });
+      const { id, displayName, userName, imgUrl, avatarColor, token } =
+        action.payload;
+      Object.assign(state, {
+        id,
+        displayName,
+        userName,
+        imgUrl,
+        avatarColor,
+        token,
+      });
     });
     builder.addCase(setLogin.rejected, (state, action) => {
       console.log(action.error.message);
     });
     builder.addCase(setSignup.fulfilled, (state, action) => {
-      const { displayName, userName, imgUrl, avatarColor, token } = action.payload;
-      Object.assign(state, { displayName, userName, imgUrl, avatarColor, token });
+      const { id, displayName, userName, imgUrl, avatarColor, token } =
+        action.payload;
+      Object.assign(state, {
+        id,
+        displayName,
+        userName,
+        imgUrl,
+        avatarColor,
+        token,
+      });
     });
     builder.addCase(setSignup.rejected, (state, action) => {
       console.log(action.error.message);

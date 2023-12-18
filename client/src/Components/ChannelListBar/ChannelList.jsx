@@ -3,7 +3,9 @@ import { AudioWaveform, ChevronRight, Hash, Video } from "lucide-react";
 import { selectChannel } from "../../features/selected/selectedSlice";
 
 function ChannelList() {
-  const { channels, selectedChannel } = useSelector((state) => state.selected); //  { [text], [voice], [video] } => [ id, name, type ]
+  const { channels } = useSelector((state) => state.channel); //  { [text], [voice], [video] } => [ id, name, type ]
+  const { selectedChannel } = useSelector((state) => state.selected); // [ id, name, type ]
+
   const dispatch = useDispatch();
 
   const handleChannelClick = async (channel) => {

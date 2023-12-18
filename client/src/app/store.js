@@ -2,15 +2,21 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authSlice from "../features/auth/authSlice";
 import infoSlice from "../features/info/infoSlice";
 import serversSlice from "../features/servers/serversSlice";
+import channelSlice from "../features/channel/channelSlice";
 import selectedSlice from "../features/selected/selectedSlice";
 import socketSlice from "../features/socket/socketSlice";
+import messageSlice from "../features/message/messageSlice";
+import modalSlice from "../features/modal/modalSlice";
 
 const reducer = combineReducers({
   auth: authSlice,
   info: infoSlice,
   servers: serversSlice,
+  channel: channelSlice,
+  message: messageSlice,
   selected: selectedSlice,
   socket: socketSlice,
+  modal: modalSlice,
 });
 
 const loadStateFromLocalStorage = () => {

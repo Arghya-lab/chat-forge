@@ -10,7 +10,11 @@ import {
   onDisconnect,
   onError,
 } from "../features/socket/socketSlice";
-import { addMessage } from "../features/selected/selectedSlice";
+import {
+  onAddMessage,
+  onDeleteMessage,
+  onEditMessage,
+} from "../features/message/messageSlice";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const socket = initializeSocketClient();
@@ -29,22 +33,34 @@ function HomePage() {
     socket.on(socketEventEnum.SOCKET_ERROR_EVENT, () => dispatch(onError()));
     //  new message receive in current room listener
     socket.on(socketEventEnum.MESSAGE_RECEIVED_EVENT, (message) =>
-      dispatch(addMessage(message))
+      dispatch(onAddMessage(message))
     );
+    //  edited message receive in current room listener
+    socket.on(socketEventEnum.MESSAGE_EDITED_EVENT, (message) =>
+      dispatch(onEditMessage(message))
+    );
+    //  deleted message receive in current room listener
+    socket.on(socketEventEnum.MESSAGE_DELETED_EVENT, (message) =>
+      dispatch(onDeleteMessage(message))
+    );
+
     return () => {
       socket.on(socketEventEnum.CONNECTED_EVENT, () => dispatch(onConnect()));
-      //  Socket disconnect listener
       socket.on(socketEventEnum.DISCONNECT_EVENT, () =>
         dispatch(onDisconnect())
       );
-      //  Socket connection error listener
       socket.on(socketEventEnum.SOCKET_ERROR_EVENT, () => dispatch(onError()));
-      //  new message receive in current room listener
       socket.on(socketEventEnum.MESSAGE_RECEIVED_EVENT, (message) =>
-        dispatch(addMessage(message))
+        dispatch(onAddMessage(message))
+      );
+      socket.on(socketEventEnum.MESSAGE_EDITED_EVENT, (message) =>
+        dispatch(onEditMessage(message))
+      );
+      socket.on(socketEventEnum.MESSAGE_DELETED_EVENT, (message) =>
+        dispatch(onDeleteMessage(message))
       );
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

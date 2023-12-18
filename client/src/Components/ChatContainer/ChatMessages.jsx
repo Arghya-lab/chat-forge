@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import InfiniteScroll from "react-infinite-scroll-component";
 import MessageItem from "./MessageItem";
-import { addMessages } from "../../features/selected/selectedSlice";
+import { addMessages } from "../../features/message/messageSlice";
 import ChatWelcome from "./ChatWelcome";
+import { areDatesSame } from "../../utils/dateFormatter";
+import DeleteMessageModal from "./DeleteMessageModal";
 
 function ChatMessages() {
   const dispatch = useDispatch();
-  const { messages, totalMessage } = useSelector((state) => state.selected);
+  const { messages, totalMessage } = useSelector((state) => state.message);
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
@@ -29,25 +31,18 @@ function ChatMessages() {
         endMessage={<ChatWelcome />}>
         {messages.length !== 0 ? (
           messages.map((message, index) => {
-            let sameUserAsPrevious = false;
+            let sameAsPrevious = false;
             if (messages.length === index + 1) {
-              sameUserAsPrevious = false;
+              sameAsPrevious = false;
             } else {
-              sameUserAsPrevious =
-                message?.senderId === messages[index + 1]?.senderId;
+              sameAsPrevious =
+                (message?.senderId === messages[index + 1]?.senderId) && areDatesSame(message?.createdAt, messages[index + 1]?.createdAt)
             }
             return (
               <MessageItem
                 key={message.id}
-                content={message.content}
-                deleted={message.deleted}
-                createdAt={message.createdAt}
-                updatedAt={message.updatedAt}
-                senderName={message.senderName}
-                senderId={message.senderId}
-                senderDp={message.senderDp}
-                senderAvatarColor={message.senderAvatarColor}
-                sameUserAsPrevious={sameUserAsPrevious}
+                message={message}
+                sameAsPrevious={sameAsPrevious}
               />
             );
           })
@@ -55,6 +50,7 @@ function ChatMessages() {
           <p>No messages started yet</p>
         )}
       </InfiniteScroll>
+      <DeleteMessageModal />
     </div>
   );
 }
