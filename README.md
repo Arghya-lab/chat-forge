@@ -9,19 +9,18 @@ Chat Forge is a Discord clone.
 - [x] Unique invite link generation & full working invite system
 - [x] Creation of Channels in a Server
 - [x] Real time messaging using Socket IO
-- [ ] Timestamps for messages
+- [x] Timestamps for messages
+- [x] Delete & Edit messages in real time for all users
+- [x] Infinite loading for messages
+- [x] Message formatting: Support for text formatting (bold, italics, code blocks), emojis, and file attachments.
 - [ ] Create Text, Audio and Video call Channels
-- [ ] Delete & Edit messages in real time for all users
-- [ ] Message formatting: Support for text formatting (bold, italics, code blocks), emojis, and file attachments.
-- [ ] Infinite loading for messages
 - [ ] Private messaging
 - [ ] 1:1 voice call between members
 - [ ] 1:1 video call between members
 - [ ] Voice Chat
+- [ ] Customization options: Allow users to personalize their profiles, change themes.
 - [ ] Server Settings (Change name and delete)
 - [ ] Channel Settings (Change name and delete)
-- [ ] Persistent channel history
-- [ ] Customization options: Allow users to personalize their profiles, change themes, or customize notification settings.
 - [ ] Show current active users in given server
 - [ ] Permissions and roles: Implement different permission levels for users (admin, moderator, regular user, Kick) and assign roles to manage access.
 - [ ] Responsive design: Ensure your app is responsive and works well on various devices and screen sizes.

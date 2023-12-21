@@ -19,7 +19,7 @@ function ChatMessages() {
   return (
     <div
       id="scrollableDiv"
-      className={`flex-1 flex flex-col-reverse py-4 bg-pearl-50 dark:bg-shadow-200 overflow-auto white-scrollbar dark:black-scrollbar`}>
+      className={`flex-1 flex flex-col-reverse py-4 bg-pearl-50 dark:bg-shadow-200 overflow-auto scrollbar scrollbar-1-light dark:scrollbar-1-dark`}>
       <InfiniteScroll
         dataLength={messages.length}
         next={() => dispatch(addMessages())}

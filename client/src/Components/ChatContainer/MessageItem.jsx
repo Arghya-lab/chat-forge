@@ -8,9 +8,9 @@ import {
   getTime,
 } from "../../utils/dateFormatter";
 import { CircleUser, PenSquare, Trash } from "lucide-react";
+import MessageData from "./MessageData";
 import { onModalOpen } from "../../features/modal/modalSlice";
 import modalTypes from "../../modalTypes";
-import EditForm from "./EditForm";
 import { setEditingMessage } from "../../features/selected/selectedSlice";
 
 function MessageItem({ message, sameAsPrevious }) {
@@ -18,14 +18,18 @@ function MessageItem({ message, sameAsPrevious }) {
 
   const [isHover, setIsHover] = useState(null);
 
-  const { server, editingMessage } = useSelector((state) => state.selected);
+  const { server } = useSelector((state) => state.selected);
   const userId = useSelector((state) => state.auth.id);
+
+  const isDeleted = message.deleted;
+  const isOwner = userId === message?.senderId;
+  const isServerMaintainer = ["admin", "moderator"].includes(server.userRole);
 
   return (
     <div
       className={`pr-10 mx-1 rounded-sm relative ${
         isHover
-          ? "bg-pearl-200 dark:bg-shadow-400"
+          ? "bg-pearl-100 dark:bg-shadow-300"
           : "bg-pearl-50 dark:bg-shadow-200"
       }`}
       onPointerEnter={() => setIsHover(true)}
@@ -70,20 +74,7 @@ function MessageItem({ message, sameAsPrevious }) {
                 </span>
               </Tooltip>
             </div>
-            {message.deleted ? (
-              <span className="text-md italic text-gray-500">(deleted)</span>
-            ) : editingMessage?.id != message?.id ? (
-              <div>
-                <span className="text-md text-shadow-700 dark:text-pearl-800">
-                  {message?.content}
-                </span>
-                {message?.createdAt !== message?.updatedAt && (
-                  <span className="text-xs text-gray-500"> (edited)</span>
-                )}
-              </div>
-            ) : (
-              <EditForm />
-            )}
+            <MessageData message={message} />
           </div>
         </div>
       ) : (
@@ -103,70 +94,38 @@ function MessageItem({ message, sameAsPrevious }) {
               </p>
             </Tooltip>
           </div>
-          {message.deleted ? (
-            <span className="text-md italic text-gray-500">(deleted)</span>
-          ) : editingMessage?.id != message?.id ? (
-            <div>
-              <span className="text-md text-shadow-700 dark:text-pearl-800">
-                {message?.content}
-              </span>
-              {message?.createdAt !== message?.updatedAt && (
-                <span className="text-xs text-gray-500"> (edited)</span>
-              )}
-            </div>
-          ) : (
-            <div className="py-2">
-              <EditForm />
-            </div>
-          )}
+          <MessageData message={message} />
         </div>
       )}
-      {!message?.deleted && (
+      {!isDeleted && (isOwner || isServerMaintainer) && (
         <div
           className={` ${
             isHover
               ? "flex gap-1 absolute z-10 right-0 top-[-1rem] mr-2 bg-pearl-300 dark:bg-shadow-500 text-shadow-200 dark:text-neutral-500 rounded-sm"
               : "hidden"
           }`}>
-          {userId === message?.senderId ? (
-            <>
-              <button onClick={() => dispatch(setEditingMessage(message))}>
-                <PenSquare
-                  size={18}
-                  className="p-2 h-8 w-8 hover:text-shadow-50 dark:hover:text-neutral-200"
-                />
-              </button>
-              <button
-                onClick={() =>
-                  dispatch(
-                    onModalOpen({
-                      type: modalTypes.DELETE_MESSAGE,
-                      data: message,
-                    })
-                  )
-                }>
-                <Trash
-                  size={18}
-                  className="p-2 h-8 w-8 hover:text-shadow-50 dark:hover:text-neutral-200"
-                />
-              </button>
-            </>
-          ) : ["admin", "moderator"].includes(server.userRole) ? (
-            <button
-              onClick={() =>
-                dispatch(
-                  onModalOpen({
-                    type: modalTypes.DELETE_MESSAGE,
-                    data: message,
-                  })
-                )
-              }>
-              <Trash
+          {isOwner && (
+            <button onClick={() => dispatch(setEditingMessage(message))}>
+              <PenSquare
                 size={18}
                 className="p-2 h-8 w-8 hover:text-shadow-50 dark:hover:text-neutral-200"
               />
             </button>
-          ) : null}
+          )}
+          <button
+            onClick={() =>
+              dispatch(
+                onModalOpen({
+                  type: modalTypes.DELETE_MESSAGE,
+                  data: message,
+                })
+              )
+            }>
+            <Trash
+              size={18}
+              className="p-2 h-8 w-8 hover:text-shadow-50 dark:hover:text-neutral-200"
+            />
+          </button>
         </div>
       )}
     </div>

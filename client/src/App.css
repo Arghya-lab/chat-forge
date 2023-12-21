@@ -20,7 +20,13 @@
     border-radius: 0.375rem;
   }
 
+
   /* -----------  No scrollbar  ----------- */
+  .scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+
   /* For Webkit-based browsers (Chrome, Safari and Opera) */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -30,52 +36,81 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+  
 
   /* -----------  Custom scrollbar  ----------- */
-  /* -----  White scrollbar  ----- */
   /* Style for custom scrollbar */
-  .white-scrollbar {
+  .scrollbar-1-light {
     overflow-y: scroll;
     scrollbar-width: thin; /* For Firefox */
     margin: 0 4px; /* Added margin on x-axis */
     scrollbar-color: #969696 #d9d9d9; /* For Firefox */
   }
-  /* Webkit (Chrome, Safari) scrollbar */
-  .white-scrollbar::-webkit-scrollbar {
-    width: 6px;
-  }
   /* Track */
-  .white-scrollbar::-webkit-scrollbar-track {
+  .scrollbar-1-light::-webkit-scrollbar-track {
     background: #d9d9d9;
   }
   /* Handle */
-  .white-scrollbar::-webkit-scrollbar-thumb {
+  .scrollbar-1-light::-webkit-scrollbar-thumb {
     margin-right: 4px;
     border-radius: 10px;
     background-color: #969696;
   }
 
   /* Styles for dark mode based on user preference */
-  /* -----  Black scrollbar  ----- */
   /* Style for custom scrollbar */
-  .black-scrollbar {
+  .scrollbar-1-dark {
     overflow-y: scroll;
     scrollbar-width: thin; /* For Firefox */
     margin: 0 4px; /* Added margin on x-axis */
     scrollbar-color: #202225 #2b2d31; /* For Firefox */
-  }
-  /* Webkit (Chrome, Safari) scrollbar */
-  .black-scrollbar::-webkit-scrollbar {
-    width: 6px;
-  }
+  }  
   /* Track */
-  .black-scrollbar::-webkit-scrollbar-track {
+  .scrollbar-1-dark::-webkit-scrollbar-track {
     background: #2b2d31;
   }
   /* Handle */
-  .black-scrollbar::-webkit-scrollbar-thumb {
+  .scrollbar-1-dark::-webkit-scrollbar-thumb {
     margin-right: 4px;
     border-radius: 10px;
     background-color: #202225;
   }
+  
+  
+  /* light scrollbar */
+  .scrollbar-2-light {
+    overflow-y: scroll;
+    scrollbar-width: thin; /* For Firefox */
+    margin: 0 4px; /* Added margin on x-axis */
+    scrollbar-color: #d0d0d0 transparent; /* For Firefox */
+  } 
+  .scrollbar-2-light::-webkit-scrollbar-thumb {
+    margin-right: 4px;
+    background-color: #d0d0d0; /* Replace with your desired color */
+    border-radius: 3px;
+  }
+  /* dark scrollbar */
+  .scrollbar-2-dark {
+    overflow-y: scroll;
+    scrollbar-width: thin; /* For Firefox */
+    margin: 0 4px; /* Added margin on x-axis */
+    scrollbar-color: #202225 transparent; /* For Firefox */
+  } 
+  .scrollbar-2-dark::-webkit-scrollbar-thumb {
+    margin-right: 4px;
+    background-color: #202225; /* Replace with your desired color */
+    border-radius: 3px;
+  }
+}
+
+
+/* for adjust text area of content input */
+#content {
+  height: fit-content;
+
+}
+/* for message item code snippet word wrapping enable */
+code {
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
 }

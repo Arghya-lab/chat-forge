@@ -130,7 +130,7 @@ function ServerListBar() {
               }`}
             />
             <img
-              src={`${import.meta.env.VITE_IMG_BASE_URL}/server_imgs/${
+              src={`${import.meta.env.VITE_FILE_BASE_URL}/server_imgs/${
                 server.imgUrl
               }`}
               height={48}

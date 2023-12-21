@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios, { authHeader } from "../../utils/axios";
+import axios, { authHeader, multipartHeader } from "../../utils/axios";
 import { store } from "../../app/store";
 import { selectChannel, selectServer } from "../selected/selectedSlice";
 import socketEventEnum from "../../socketEventEnum";
@@ -9,8 +9,8 @@ import { socket } from "../../Components/HomePage";
 const sendMessage = createAsyncThunk("selected/sendMessage", async (data) => {
   const res = await axios.post(
     `/message/${store.getState().selected.selectedChannel?.id}`,
-    { content: data.content },
-    authHeader
+    data,
+    multipartHeader
   );
   return res.data;
 });

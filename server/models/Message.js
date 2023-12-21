@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { array } = require("../middleware/messageFileUpload");
 
 const messageSchema = new mongoose.Schema(
   {
@@ -6,9 +7,9 @@ const messageSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    fileUrl: {
-      type: String,
-      default: "",
+    fileUrls: {
+      type: Array,
+      default: [],
     },
     senderId: {
       type: mongoose.Schema.Types.ObjectId,

@@ -13,7 +13,7 @@ function ChannelList() {
   };
 
   return (
-    <div className="overflow-y-scroll no-scrollbar">
+    <div className="overflow-y-scroll scrollbar scrollbar-2-light dark:scrollbar-2-dark">
       {Object.keys(channels).map((type) =>
         channels[type].length !== 0 ? (
           <div className="my-8" key={type}>

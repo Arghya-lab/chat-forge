@@ -6,12 +6,13 @@ const {
   editMessage,
   deleteMessage,
 } = require("../controllers/message");
+const upload = require("../middleware/messageFileUpload");
 
 const router = express.Router();
 
 //          ---------------  CREATE  ---------------         //
 // create message using : POST api/message/:channelId
-router.post("/:channelId", fetchUser, createMessage);
+router.post("/:channelId", fetchUser, upload.array("file", 12), createMessage);
 
 //          ---------------  READ  ---------------         //
 // fetch all messages of room using : GET api/message/:channelId

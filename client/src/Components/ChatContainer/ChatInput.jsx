@@ -1,59 +1,132 @@
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Laugh, PlusCircle, SendHorizontal } from "lucide-react";
+import { Textarea } from "@material-tailwind/react";
+import { useDropzone } from "react-dropzone";
+import { FileIcon, defaultStyles } from "react-file-icon";
+import { PlusCircle, SendHorizontal } from "lucide-react";
 import { sendMessage } from "../../features/message/messageSlice";
+import EmojiPicker from "./EmojiPicker";
 
 function ChatInput() {
   const dispatch = useDispatch();
   const { selectedChannel } = useSelector((state) => state.selected);
 
-  const formik = useFormik({
-    initialValues: {
-      content: "",
+  const [content, setContent] = useState("");
+  const [files, setFiles] = useState([]);
+
+  const { getRootProps, getInputProps, open } = useDropzone({
+    accept: "*",
+    maxFiles: 12,
+    onDrop: (acceptedFiles) => {
+      const newFiles = acceptedFiles.map((file) =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        })
+      );
+      setFiles(newFiles);
     },
-    validationSchema: Yup.object({
-      content: Yup.string()
-        .trim()
-        .required()
-        .min(1)
-        .max(280, "Can't send more than 280 characters"),
-    }),
-    onSubmit: async (values) => {
-      dispatch(sendMessage(values));
-      formik.resetForm();
-    },
+    noClick: true,
   });
 
+  const handleInputChange = (e) => {
+    setContent(e.target.value);
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      // Perform your action when Enter is pressed without Shift
+      event.preventDefault();
+      handleSubmit();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      setContent("");
+    }
+  };
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("content", content)
+    for (const file of files) {
+      formData.append("file", file)
+    }
+    dispatch(sendMessage(formData));
+    setContent("");
+    setFiles([])
+  };
+
   return (
-    <form
-      className="mx-4 mb-6 bg-pearl-300 dark:bg-gray-800 rounded-lg flex items-center gap-1"
-      onSubmit={formik.handleSubmit}>
-      <div className="p-2 ml-2 cursor-pointer text-gray-700 dark:text-neutral-400 hover:text-shadow-800 dark:hover:text-pearl-900">
-        <PlusCircle />
+    <div className="mb-6">
+      <div className="mx-4  max-h-72 bg-pearl-300 dark:bg-gray-800 rounded-lg overflow-y-scroll scrollbar scrollbar-2-light dark:scrollbar-2-dark">
+        {files.length !== 0 && (
+          <div className="m-4 flex gap-4 flex-wrap">
+            {files.map((file) => {
+              const { type, name, preview } = file;
+              const extension = type.split("/")[type.split("/").length - 1];
+
+              return (
+                <div
+                  key={name}
+                  className="h-48 w-48 px-2 pt-6 rounded-md bg-neutral-300 dark:bg-shadow-200 pb-3 flex flex-col justify-between">
+                  {type.split("/")[0] === "image" ? (
+                    <div>
+                      <img src={preview} className="h-32 w-44 object-contain" />
+                    </div>
+                  ) : (
+                    <div className="flex justify-center items-center">
+                      <div className="h-24 w-24">
+                        <FileIcon
+                          extension={extension}
+                          {...defaultStyles[extension]}
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <p className="text-ellipsis overflow-hidden whitespace-nowrap text-xs text-shadow-700 dark:text-pearl-700">
+                    {name}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <form className="flex gap-1 relative" onSubmit={() => handleSubmit}>
+          {/* file upload btn */}
+          <div className="" {...getRootProps({ className: "dropzone" })}>
+            <input {...getInputProps()} />
+            <div
+              className="py-3 px-2 ml-2 sticky top-0 cursor-pointer text-gray-700 dark:text-neutral-400 hover:text-shadow-800 dark:hover:text-pearl-900"
+              onClick={open}>
+              <PlusCircle />
+            </div>
+          </div>
+          {/* content input */}
+          <Textarea
+            className="flex-1 pb-0 pt-3 pl-0 min-h-[12px] bg-pearl-300 dark:bg-gray-800 rounded-lg border-none text-shadow-200 dark:text-pearl-50 focus:outline-none overflow-x-hidden whitespace-pre-wrap break-word"
+            id="content"
+            name="content"
+            maxLength={4096}
+            minLength={1}
+            labelProps={{
+              className: "before:content-none after:content-none",
+            }}
+            placeholder={`Message # | ${selectedChannel?.name || ""}`}
+            rows={content.split("\n").length}
+            value={content}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+          />
+          {/* emoji picking btn */}
+          <EmojiPicker addEmoji={setContent} />
+          {/* send message btn */}
+          <div className="py-3 mr-2">
+            <SendHorizontal
+              className="sticky top-0 text-gray-700 dark:text-neutral-400 hover:text-teal-700 dark:hover:text-green-600"
+              onClick={handleSubmit}
+            />
+          </div>
+        </form>
       </div>
-      <input
-        className="flex-1 bg-pearl-300 dark:bg-gray-800 rounded-lg border-none py-2 h-11 text-shadow-200 dark:text-pearl-50 focus:outline-none"
-        id="content"
-        name="content"
-        maxLength={280}
-        minLength={1}
-        autoComplete="off"
-        placeholder={`Message #  | ${selectedChannel?.name || ""}`}
-        type="text"
-        onChange={formik.handleChange}
-        value={formik.values.content}
-        {...formik.getFieldProps("content")}
-      />
-      <div className="p-2 cursor-pointer text-gray-700 dark:text-neutral-400 hover:text-yellow-900 dark:hover:text-orange-600">
-        <Laugh />
-      </div>
-      <button
-        type="submit"
-        className="p-2 mr-2 text-gray-700 dark:text-neutral-400 hover:text-teal-700 dark:hover:text-green-600">
-        <SendHorizontal />
-      </button>
-    </form>
+    </div>
   );
 }
 

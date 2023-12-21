@@ -15,7 +15,7 @@ const setMessageWithSenderInfo = async (message) => {
   return {
     id: message._id,
     content: message.content,
-    fileUrl: message.fileUrl,
+    fileUrls: message.fileUrls,
     channelId: message.channelId,
     deleted: message.deleted,
     createdAt: message.createdAt,
@@ -41,6 +41,7 @@ const createMessage = async (req, res) => {
 
     const newMessage = await Message.create({
       content,
+      fileUrls: req.fileUrls,
       senderId: userId,
       channelId,
     });
