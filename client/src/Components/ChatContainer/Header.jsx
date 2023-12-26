@@ -21,7 +21,7 @@ function Header() {
     );
   }
   return (
-    <div className="w-full px-6 py-3 flex justify-between items-center min-h-[56px] border-b-2 border-pearl-600 dark:border-shadow-900 shadow-sm">
+    <div className="w-full px-6 py-3 flex justify-between items-center h-14 border-b-2 border-pearl-600 dark:border-shadow-900 shadow-sm">
       <div className="flex items-center gap-2">
         <div className="text-gray-500">
           {selectedChannel?.type === "text" ? (

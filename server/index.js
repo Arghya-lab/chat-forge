@@ -9,6 +9,8 @@ const authRoutes = require("./routes/auth");
 const serverRoutes = require("./routes/server");
 const channelRoutes = require("./routes/channel");
 const messageRoutes = require("./routes/message");
+const fetchUser = require("./middleware/fetchUser");
+const { createToken } = require("./controllers/livekit");
 
 const port = process.env.PORT || 8001;
 const app = express();
@@ -42,6 +44,8 @@ app.use("/api/server", serverRoutes);
 app.use("/api/channel", channelRoutes);
 //  Message
 app.use("/api/message", messageRoutes);
+//  Media Room
+app.get("/api/livekit/:channelId", fetchUser, createToken);
 
 
 /////*  ----- Start the server  ----- *///////
