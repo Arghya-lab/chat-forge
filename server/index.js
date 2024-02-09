@@ -6,9 +6,11 @@ const cors = require("cors");
 const { initializeSocketIO } = require("./socket");
 const connectWithMongo = require("./db");
 const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/user");
 const serverRoutes = require("./routes/server");
 const channelRoutes = require("./routes/channel");
 const messageRoutes = require("./routes/message");
+const directMessageRoutes = require("./routes/directMessage");
 const fetchUser = require("./middleware/fetchUser");
 const { createToken } = require("./controllers/livekit");
 
@@ -38,15 +40,18 @@ connectWithMongo();
 /////*  ----- Routes  ----- *///////
 //  Auth
 app.use("/api/auth", authRoutes);
+//  User
+app.use("/api/user", userRoutes);
 //  Server
 app.use("/api/server", serverRoutes);
 //  Channel
 app.use("/api/channel", channelRoutes);
 //  Message
 app.use("/api/message", messageRoutes);
+//  DirectMessage
+app.use("/api/directMessage", directMessageRoutes);
 //  Media Room
 app.get("/api/livekit/:channelId", fetchUser, createToken);
-
 
 /////*  ----- Start the server  ----- *///////
 httpServer.listen(port, () => {

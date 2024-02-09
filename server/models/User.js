@@ -27,13 +27,15 @@ const userSchema = new mongoose.Schema(
     avatarColor: {
       type: String,
     },
-    // conversations: {
-    //   type: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Conversations",
-    //   }],
-    //   default: [],
-    // },
+    conversations: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Conversations",
+        },
+      ],
+      default: [],
+    },
   },
   { timestamps: true }
 );

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const messageSchema = new mongoose.Schema(
+const directMessageSchema = new mongoose.Schema(
   {
     content: {
       type: String,
@@ -12,12 +12,12 @@ const messageSchema = new mongoose.Schema(
     },
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Member",
+      ref: "User",
       required: true,
     },
-    channelId: {
+    conversationId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Channel",
+      ref: "Conversation",
       required: true,
     },
     deleted: {
@@ -28,5 +28,5 @@ const messageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Message = mongoose.model("Message", messageSchema);
-module.exports = Message;
+const DirectMessage = mongoose.model("DirectMessage", directMessageSchema);
+module.exports = DirectMessage;

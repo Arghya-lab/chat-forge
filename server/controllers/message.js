@@ -5,27 +5,7 @@ const Server = require("../models/Server");
 const User = require("../models/User");
 const { emitSocketEvent } = require("../socket");
 const eventEnum = require("../socket/eventEnum");
-
-//  function to return message data with sender detail
-const setMessageWithSenderInfo = async (message) => {
-  if (!message) return null;
-
-  const sender = await User.findById(message.senderId);
-
-  return {
-    id: message._id,
-    content: message.content,
-    fileUrls: message.fileUrls,
-    channelId: message.channelId,
-    deleted: message.deleted,
-    createdAt: message.createdAt,
-    updatedAt: message.updatedAt,
-    senderId: message.senderId,
-    senderName: sender.displayName,
-    senderDp: sender.imgUrl,
-    senderAvatarColor: sender.avatarColor,
-  };
-};
+const setMessageWithSenderInfo = require("../utils/setMessageWithSenderInfo");
 
 //    ----------  CREATE  ----------     //
 //  creating a new message
@@ -34,6 +14,7 @@ const createMessage = async (req, res) => {
     const { channelId } = req.params;
     const { content } = req.body;
     const { userId } = req.user;
+    const fileUrls = req.fileUrls;
 
     if (!(await Channel.findById(channelId))) {
       return res.status(404).send("Chat doesn't exist");
@@ -41,7 +22,7 @@ const createMessage = async (req, res) => {
 
     const newMessage = await Message.create({
       content,
-      fileUrls: req.fileUrls,
+      fileUrls,
       senderId: userId,
       channelId,
     });
