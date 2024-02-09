@@ -3,13 +3,13 @@ import axios, { authHeader, multipartHeader } from "../../utils/axios";
 import { store } from "../../app/store";
 import { selectChannel, selectServer } from "../selected/selectedSlice";
 import socketEventEnum from "../../socketEventEnum";
-import { socket } from "../../Components/HomePage";
+import { socket } from "../../Components/Pages/HomePage";
 
 // First, create the thunk
-const sendMessage = createAsyncThunk("selected/sendMessage", async (data) => {
+const sendMessage = createAsyncThunk("selected/sendMessage", async (formData) => {
   const res = await axios.post(
     `/message/${store.getState().selected.selectedChannel?.id}`,
-    data,
+    formData,
     multipartHeader
   );
   return res.data;
@@ -57,7 +57,6 @@ export const messageSlice = createSlice({
     },
     onEditMessage: (state, action) => {
       const editedMessage = action.payload;
-      console.log(editMessage);
 
       state.messages = state.messages.map((message) => {
         if (message.id === editedMessage.id) {
@@ -77,6 +76,10 @@ export const messageSlice = createSlice({
           return message;
         }
       });
+    },
+    clearMessages: (state) => {
+      state.messages = [];
+      state.totalMessage = 0;
     },
   },
   extraReducers: (builder) => {
@@ -135,7 +138,7 @@ export const messageSlice = createSlice({
   },
 });
 
-export const { onAddMessage, onEditMessage, onDeleteMessage } =
+export const { onAddMessage, onEditMessage, onDeleteMessage, clearMessages } =
   messageSlice.actions;
 export { sendMessage, addMessages, deleteMessage, editMessage };
 export default messageSlice.reducer;

@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   MessageSquare,
   MessageSquareDashed,
@@ -11,11 +13,13 @@ import {
 import { setSelectedMode } from "../../features/info/infoSlice";
 import { Tooltip } from "@material-tailwind/react";
 import CreateServerForm from "./CreateServerModal";
-import { getUserServers } from "../../features/servers/serversSlice";
 import {
+  clearSelected,
   selectChannel,
   selectServer,
 } from "../../features/selected/selectedSlice";
+import { clearMessages } from "../../features/message/messageSlice";
+import { clearChannels } from "../../features/channel/channelSlice";
 
 const modes = [
   {
@@ -36,11 +40,15 @@ const modes = [
 ];
 function ServerListBar() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const pathname = useLocation().pathname;
+  const currentServer = pathname.split("/")[2];
 
   const { selectedMode } = useSelector((state) => state.info);
   const { servers } = useSelector((state) => state.servers);
 
-  const [selectedItem, setSelectedItem] = useState("directMessage");
+  const [selectedItem, setSelectedItem] = useState(currentServer);
   const [hoverItem, setHoverItem] = useState(null);
   const [openCreateServerForm, setOpenCreateServerForm] = useState(false);
 
@@ -54,26 +62,26 @@ function ServerListBar() {
   };
 
   const handleDirectMessageClick = () => {
-    // dispatch(
-    //   setSelected({
-    //     server: { id: "myself", name: "myself", imgUrl: "" },
-    //     channels: [],
-    //   })
-    // );
-    // setSelectedItem("directMessage");
-    console.log("directMessage btn clicked");
+    dispatch(clearSelected());
+    dispatch(clearChannels());
+    dispatch(clearMessages());
+
+    setSelectedItem("@me");
+
+    navigate(`/channels/@me`);
   };
 
-  const handleServerBtnClick = async (server) => {
-    dispatch(selectServer(server))
-    .then(() => {dispatch(selectChannel())});
-    setSelectedItem(server.id);
+  const handleServerBtnClick = (server) => {
+    dispatch(selectServer(server)).then(() => {
+      dispatch(selectChannel())
+        .then(unwrapResult)
+        .then((promiseResult) => {
+          // handle result here
+          setSelectedItem(server.id);
+          navigate(`/channels/${server.id}/${promiseResult?.channel?.id}`);
+        });
+    });
   };
-
-  useEffect(() => {
-    dispatch(getUserServers())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div className="pt-3 w-[72px] h-screen flex item-center flex-col bg-pearl-300 dark:bg-shadow-900 overflow-y-scroll  no-scrollbar">
@@ -86,23 +94,21 @@ function ServerListBar() {
             onPointerLeave={() => setHoverItem(null)}>
             <div
               className={`w-1 rounded-r-md bg-neutral-700 dark:bg-neutral-200 absolute left-0 transition-height duration-300 ease-in-out ${
-                selectedItem === "directMessage"
+                selectedItem === "@me"
                   ? "h-10"
-                  : hoverItem === "directMessage"
+                  : hoverItem === "@me"
                   ? "h-5"
                   : "h-0"
               }`}
             />
             <div
               className={`transition-shape duration-300 ease-in-out ${
-                selectedItem === "directMessage" ||
-                hoverItem === "directMessage"
+                selectedItem === "@me" || hoverItem === "@me"
                   ? "rounded-2xl bg-blue-800"
                   : "rounded-full bg-shadow-200"
               } w-12 h-12 flex items-center justify-center`}
               onClick={handleDirectMessageClick}>
-              {selectedItem === "directMessage" ||
-              hoverItem === "directMessage" ? (
+              {selectedItem === "@me" || hoverItem === "@me" ? (
                 <MessageSquare className="text-gray-100" size={28} />
               ) : (
                 <MessageSquareDashed className="text-gray-400" size={28} />

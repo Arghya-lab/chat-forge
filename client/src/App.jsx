@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Routes, Route } from "react-router-dom";
-import AuthPage from "./Components/Auth/AuthPage";
-import HomePage from "./Components/HomePage";
+import AuthPage from "./Components/Pages/AuthPage";
 import RequireAuth from "./Components/Auth/RequireAuth";
-import ServerInvite from "./Components/ServerInvite";
+import UserDataLoader from "./Components/Pages/UserDataLoaderPage";
+import OverviewPage from "./Components/Pages/OverviewPage";
+import HomePage from "./Components/Pages/HomePage";
+import ServerInvitePage from "./Components/Pages/ServerInvitePage";
 import "./app.css";
 
 function App() {
@@ -24,9 +26,25 @@ function App() {
 
   return (
     <Routes>
-      <Route path="/login" element={<AuthPage />} />
+      <Route path="login" element={<AuthPage />} />
       <Route
         path="/"
+        element={
+          <RequireAuth>
+            <UserDataLoader />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="channels/@me"
+        element={
+          <RequireAuth>
+            <OverviewPage />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="channels/:serverId/:channelId"
         element={
           <RequireAuth>
             <HomePage />
@@ -34,10 +52,10 @@ function App() {
         }
       />
       <Route
-        path="/invite/:inviteCode"
+        path="invite/:inviteCode"
         element={
           <RequireAuth>
-            <ServerInvite />
+            <ServerInvitePage />
           </RequireAuth>
         }
       />

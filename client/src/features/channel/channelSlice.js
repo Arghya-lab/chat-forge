@@ -27,7 +27,15 @@ const initialState = {
 export const channelSlice = createSlice({
   name: "channel",
   initialState,
-  reducers: {},
+  reducers: {
+    clearChannels: (state) => {
+      state.channels = {
+        text: [],
+        voice: [],
+        video: [],
+      };
+    },
+  },
   extraReducers: (builder) => {
     //  set all channels of the server
     builder.addCase(selectServer.fulfilled, (state, action) => {
@@ -76,5 +84,6 @@ export const channelSlice = createSlice({
   },
 });
 
+export const { clearChannels } = channelSlice.actions;
 export { createChannel };
 export default channelSlice.reducer;

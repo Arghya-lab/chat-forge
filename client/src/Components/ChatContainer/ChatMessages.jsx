@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import InfiniteScroll from "react-infinite-scroll-component";
 import MessageItem from "./MessageItem";
@@ -6,14 +7,35 @@ import { addMessages } from "../../features/message/messageSlice";
 import ChatWelcome from "./ChatWelcome";
 import { areDatesSame } from "../../utils/dateFormatter";
 import DeleteMessageModal from "./DeleteMessageModal";
+import UserProfileModal from "../Modals/UserProfileModal";
+import { addDirectMessages } from "../../features/directMessages/directMessagesSlice";
 
 function ChatMessages() {
+  const serverId = useParams().serverId; //  :serverId/:channelId
+  const isDirectMessages = serverId === "@me";
+
   const dispatch = useDispatch();
-  const { messages, totalMessage } = useSelector((state) => state.message);
+  const { messages: channelMessages, totalMessage: totalChannelMessage } =
+    useSelector((state) => state.message);
+  const { directMessages, totalDirectMessage } = useSelector(
+    (state) => state.directMessages
+  );
   const [hasMore, setHasMore] = useState(true);
 
+  let totalMessage = isDirectMessages
+    ? totalDirectMessage
+    : totalChannelMessage;
+  let messages = isDirectMessages ? directMessages : channelMessages;
+
+  const addMoreMessages = () => {
+    if (isDirectMessages) {
+      dispatch(addDirectMessages());
+    } else {
+      dispatch(addMessages());
+    }
+  };
   useEffect(() => {
-    setHasMore(messages.length != totalMessage);
+    setHasMore(messages.length < totalMessage);
   }, [messages.length, totalMessage]);
 
   return (
@@ -22,7 +44,7 @@ function ChatMessages() {
       className={`flex-1 flex flex-col-reverse py-4 bg-pearl-50 dark:bg-shadow-200 overflow-auto scrollbar scrollbar-1-light dark:scrollbar-1-dark`}>
       <InfiniteScroll
         dataLength={messages.length}
-        next={() => dispatch(addMessages())}
+        next={addMoreMessages}
         style={{ display: "flex", flexDirection: "column-reverse" }} //To put endMessage and loader to the top.
         inverse={true} //
         hasMore={hasMore}
@@ -36,7 +58,11 @@ function ChatMessages() {
               sameAsPrevious = false;
             } else {
               sameAsPrevious =
-                (message?.senderId === messages[index + 1]?.senderId) && areDatesSame(message?.createdAt, messages[index + 1]?.createdAt)
+                message?.senderId === messages[index + 1]?.senderId &&
+                areDatesSame(
+                  message?.createdAt,
+                  messages[index + 1]?.createdAt
+                );
             }
             return (
               <MessageItem
@@ -51,6 +77,7 @@ function ChatMessages() {
         )}
       </InfiniteScroll>
       <DeleteMessageModal />
+      <UserProfileModal />
     </div>
   );
 }

@@ -23,6 +23,21 @@ const selectChannel = createAsyncThunk(
   }
 );
 
+const selectConversation = createAsyncThunk(
+  "selected/selectConversation",
+  async (conversation) => {
+    const res = await axios.get(
+      `directMessage/${conversation?.userId}`,
+      authHeader
+    );
+    return {
+      conversation,
+      messages: res.data?.messages,
+      totalMessage: res.data?.totalMessage,
+    };
+  }
+);
+
 const initialState = {
   server: {
     id: "",
@@ -36,6 +51,14 @@ const initialState = {
     type: "",
   },
   editingMessage: null, //  { id, content, deleted, createdAt, updatedAt, senderName, senderId, senderDp, senderAvatarColor }
+  editingDirectMessage: null, //  { id, content, senderId, deleted, createdAt, updatedAt, senderName, senderDp, senderAvatarColor }
+  currentConversation: {
+    userId: "",
+    displayName: "",
+    userName: "",
+    imgUrl: "",
+    avatarColor: "",
+  }, //  userId, displayName, userName, imgUrl, avatarColor, newReceivedMessages
 };
 
 export const selectedSlice = createSlice({
@@ -46,6 +69,26 @@ export const selectedSlice = createSlice({
       state.editingMessage = action.payload;
     },
     removeEditingMessage: (state) => {
+      state.editingMessage = null;
+    },
+    setEditingDirectMessage: (state, action) => {
+      state.editingDirectMessage = action.payload;
+    },
+    removeEditingDirectMessage: (state) => {
+      state.editingDirectMessage = null;
+    },
+    clearSelected: (state) => {
+      state.server = {
+        id: "",
+        name: "",
+        imgUrl: "",
+        userRole: "",
+      };
+      state.selectedChannel = {
+        id: "",
+        name: "",
+        type: "",
+      };
       state.editingMessage = null;
     },
   },
@@ -66,10 +109,32 @@ export const selectedSlice = createSlice({
     builder.addCase(selectChannel.rejected, (state, action) => {
       console.log(action.error.message);
     });
+
+    //  select conversation
+    builder.addCase(selectConversation.fulfilled, (state, action) => {
+      const { conversation } = action.payload;
+      const { userId, displayName, userName, imgUrl, avatarColor } =
+        conversation;
+      state.currentConversation = {
+        userId,
+        displayName,
+        userName,
+        imgUrl,
+        avatarColor,
+      };
+    });
+    builder.addCase(selectConversation.rejected, (state, action) => {
+      console.log(action.error.message);
+    });
   },
 });
 
-export const { setEditingMessage, removeEditingMessage } =
-  selectedSlice.actions;
-export { selectServer, selectChannel };
+export const {
+  setEditingMessage,
+  removeEditingMessage,
+  setEditingDirectMessage,
+  removeEditingDirectMessage,
+  clearSelected,
+} = selectedSlice.actions;
+export { selectServer, selectChannel, selectConversation };
 export default selectedSlice.reducer;

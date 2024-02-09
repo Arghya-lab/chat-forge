@@ -1,15 +1,29 @@
 import { useDispatch, useSelector } from "react-redux";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useNavigate, useParams } from "react-router-dom";
 import { AudioWaveform, ChevronRight, Hash, Video } from "lucide-react";
 import { selectChannel } from "../../features/selected/selectedSlice";
 
 function ChannelList() {
+  const navigate = useNavigate();
+  const params = useParams();
+
   const { channels } = useSelector((state) => state.channel); //  { [text], [voice], [video] } => [ id, name, type ]
   const { selectedChannel } = useSelector((state) => state.selected); // [ id, name, type ]
 
   const dispatch = useDispatch();
 
   const handleChannelClick = async (channel) => {
-    dispatch(selectChannel(channel));
+    dispatch(selectChannel(channel))
+      .then(unwrapResult)
+      .then((promiseResult) => {
+        // handle result here
+        if (params?.serverId) {
+          navigate(
+            `/channels/${params?.serverId}/${promiseResult?.channel?.id}`
+          );
+        }
+      });
   };
 
   return (

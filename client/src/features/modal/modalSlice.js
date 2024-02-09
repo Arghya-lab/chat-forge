@@ -12,7 +12,7 @@ export const modalSlice = createSlice({
   reducers: {
     onModalOpen: (state, action) => {
       const { type, data = {} } = action.payload;
-      
+
       state.type = type;
       state.isModalOpen = true;
       state.data = data;

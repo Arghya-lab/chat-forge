@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Textarea } from "@material-tailwind/react";
 import { useDropzone } from "react-dropzone";
@@ -6,10 +7,15 @@ import { FileIcon, defaultStyles } from "react-file-icon";
 import { PlusCircle, SendHorizontal } from "lucide-react";
 import { sendMessage } from "../../features/message/messageSlice";
 import EmojiPicker from "./EmojiPicker";
+import { sendDirectMessage } from "../../features/directMessages/directMessagesSlice";
 
 function ChatInput() {
+  const params = useParams(); //  :serverId/:channelId
+
   const dispatch = useDispatch();
-  const { selectedChannel } = useSelector((state) => state.selected);
+  const { selectedChannel, currentConversation } = useSelector(
+    (state) => state.selected
+  );
 
   const [content, setContent] = useState("");
   const [files, setFiles] = useState([]);
@@ -45,13 +51,26 @@ function ChatInput() {
 
   const handleSubmit = async () => {
     const formData = new FormData();
-    formData.append("content", content)
+    formData.append("content", content);
     for (const file of files) {
-      formData.append("file", file)
+      formData.append("file", file);
     }
-    dispatch(sendMessage(formData));
+    if (params.serverId === "@me") {
+      if (currentConversation?.userId) {
+        dispatch(
+          sendDirectMessage({
+            formData,
+            receiverId: currentConversation.userId,
+          })
+        );
+      } else {
+        dispatch(sendDirectMessage({ formData, receiverId: params.channelId }));
+      }
+    } else if (params.serverId) {
+      dispatch(sendMessage(formData));
+    }
     setContent("");
-    setFiles([])
+    setFiles([]);
   };
 
   return (
@@ -109,7 +128,11 @@ function ChatInput() {
             labelProps={{
               className: "before:content-none after:content-none",
             }}
-            placeholder={`Message # | ${selectedChannel?.name || ""}`}
+            placeholder={
+              params.serverId === "@me"
+                ? `Message @ ${currentConversation?.displayName}`
+                : `Message # | ${selectedChannel?.name || ""}`
+            }
             rows={content.split("\n").length}
             value={content}
             onChange={handleInputChange}

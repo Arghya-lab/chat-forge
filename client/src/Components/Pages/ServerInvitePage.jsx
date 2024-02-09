@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addServer } from "../features/servers/serversSlice";
+import { addServer } from "../../features/servers/serversSlice";
 
-function ServerInvite() {
+function ServerInvitePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -23,4 +23,4 @@ function ServerInvite() {
   );
 }
 
-export default ServerInvite;
+export default ServerInvitePage;

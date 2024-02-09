@@ -2,12 +2,22 @@ import { Laugh } from "lucide-react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { removeEditingMessage } from "../../features/selected/selectedSlice";
+import {
+  removeEditingDirectMessage,
+  removeEditingMessage,
+} from "../../features/selected/selectedSlice";
 import { editMessage } from "../../features/message/messageSlice";
+import { useParams } from "react-router-dom";
+import { editDirectMessage } from "../../features/directMessages/directMessagesSlice";
 
 function EditForm() {
+  const serverId = useParams().serverId; //  :serverId/:channelId
+  const isDirectMessages = serverId === "@me";
+
   const dispatch = useDispatch();
-  const { editingMessage } = useSelector((state) => state.selected);
+  const { editingMessage, editingDirectMessage } = useSelector(
+    (state) => state.selected
+  );
 
   const handleKeyDown = (event) => {
     if (event.key === "Enter") {
@@ -16,14 +26,16 @@ function EditForm() {
       formik.handleSubmit();
     } else if (event.key === "Escape") {
       event.preventDefault();
-      
+
       dispatch(removeEditingMessage());
     }
   };
 
   const formik = useFormik({
     initialValues: {
-      content: editingMessage?.content,
+      content: isDirectMessages
+        ? editingDirectMessage?.content
+        : editingMessage?.content || "",
     },
     validationSchema: Yup.object({
       content: Yup.string()
@@ -33,7 +45,15 @@ function EditForm() {
         .max(280, "Can't send more than 280 characters"),
     }),
     onSubmit: (values) => {
-      dispatch(editMessage(values)).then(()=>dispatch(removeEditingMessage()));
+      if (isDirectMessages) {
+        dispatch(editDirectMessage(values)).then(() =>
+          dispatch(removeEditingDirectMessage())
+        );
+      } else {
+        dispatch(editMessage(values)).then(() =>
+          dispatch(removeEditingMessage())
+        );
+      }
     },
   });
 

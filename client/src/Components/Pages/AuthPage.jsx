@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Signup from "./Signup";
-import Login from "./Login";
+import Signup from "../Auth/Signup";
+import Login from "../Auth/Login";
 
 function AuthPage() {
   const [pageType, setPageType] = useState("login");

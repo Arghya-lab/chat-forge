@@ -3,9 +3,10 @@ import authSlice from "../features/auth/authSlice";
 import infoSlice from "../features/info/infoSlice";
 import serversSlice from "../features/servers/serversSlice";
 import channelSlice from "../features/channel/channelSlice";
+import messageSlice from "../features/message/messageSlice";
+import directMessagesSlice from "../features/directMessages/directMessagesSlice";
 import selectedSlice from "../features/selected/selectedSlice";
 import socketSlice from "../features/socket/socketSlice";
-import messageSlice from "../features/message/messageSlice";
 import modalSlice from "../features/modal/modalSlice";
 
 const reducer = combineReducers({
@@ -14,6 +15,7 @@ const reducer = combineReducers({
   servers: serversSlice,
   channel: channelSlice,
   message: messageSlice,
+  directMessages: directMessagesSlice,
   selected: selectedSlice,
   socket: socketSlice,
   modal: modalSlice,

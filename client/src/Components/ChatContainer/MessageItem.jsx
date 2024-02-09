@@ -1,5 +1,6 @@
-import { useState } from "react";
 import PropTypes from "prop-types";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from "@material-tailwind/react";
 import {
@@ -11,9 +12,15 @@ import { CircleUser, PenSquare, Trash } from "lucide-react";
 import MessageData from "./MessageData";
 import { onModalOpen } from "../../features/modal/modalSlice";
 import modalTypes from "../../modalTypes";
-import { setEditingMessage } from "../../features/selected/selectedSlice";
+import {
+  setEditingDirectMessage,
+  setEditingMessage,
+} from "../../features/selected/selectedSlice";
 
 function MessageItem({ message, sameAsPrevious }) {
+  const serverId = useParams().serverId; //  :serverId/:channelId
+  const isDirectMessages = serverId === "@me";
+
   const dispatch = useDispatch();
 
   const [isHover, setIsHover] = useState(null);
@@ -24,6 +31,23 @@ function MessageItem({ message, sameAsPrevious }) {
   const isDeleted = message.deleted;
   const isOwner = userId === message?.senderId;
   const isServerMaintainer = ["admin", "moderator"].includes(server.userRole);
+
+  const handleEdit = () => {
+    if (isDirectMessages) {
+      dispatch(setEditingDirectMessage(message));
+    } else {
+      dispatch(setEditingMessage(message));
+    }
+  };
+
+  const handleDelete = () => {
+    dispatch(
+      onModalOpen({
+        type: modalTypes.DELETE_MESSAGE,
+        data: message,
+      })
+    );
+  };
 
   return (
     <div
@@ -59,7 +83,15 @@ function MessageItem({ message, sameAsPrevious }) {
             <div className="flex items-center">
               <h3
                 className="font-normal text-sm hover:underline cursor-pointer"
-                style={{ color: message?.senderAvatarColor }}>
+                style={{ color: message?.senderAvatarColor }}
+                onClick={() => {
+                  dispatch(
+                    onModalOpen({
+                      type: modalTypes.USER_PROFILE,
+                      data: { userId: message?.senderId },
+                    })
+                  );
+                }}>
                 {message?.senderName}
               </h3>
               &nbsp;
@@ -80,7 +112,7 @@ function MessageItem({ message, sameAsPrevious }) {
       ) : (
         <div className="flex">
           <div
-            className={`w-[4.5rem] text-center  ${
+            className={`w-[4.5rem] text-center ${
               isHover ? "visible" : "invisible"
             }`}>
             <Tooltip
@@ -105,22 +137,14 @@ function MessageItem({ message, sameAsPrevious }) {
               : "hidden"
           }`}>
           {isOwner && (
-            <button onClick={() => dispatch(setEditingMessage(message))}>
+            <button onClick={handleEdit}>
               <PenSquare
                 size={18}
                 className="p-2 h-8 w-8 hover:text-shadow-50 dark:hover:text-neutral-200"
               />
             </button>
           )}
-          <button
-            onClick={() =>
-              dispatch(
-                onModalOpen({
-                  type: modalTypes.DELETE_MESSAGE,
-                  data: message,
-                })
-              )
-            }>
+          <button onClick={handleDelete}>
             <Trash
               size={18}
               className="p-2 h-8 w-8 hover:text-shadow-50 dark:hover:text-neutral-200"

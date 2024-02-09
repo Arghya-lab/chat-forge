@@ -6,14 +6,29 @@ import modalTypes from "../../modalTypes";
 import { getDateTime } from "../../utils/dateFormatter";
 import { onModalClose } from "../../features/modal/modalSlice";
 import { deleteMessage } from "../../features/message/messageSlice";
+import { useParams } from "react-router-dom";
+import { deleteDirectMessage } from "../../features/directMessages/directMessagesSlice";
 
 function DeleteMessageModal() {
+  const serverId = useParams().serverId; //  :serverId/:channelId
+  const isDirectMessages = serverId === "@me";
+
   const dispatch = useDispatch();
 
   const modalRef = useRef(null);
 
   const { type, isModalOpen, data } = useSelector((state) => state.modal);
   const message = data;
+
+  const handleDelete = () => {
+    if (isDirectMessages) {
+      dispatch(deleteDirectMessage(message.id)).then(() =>
+        dispatch(onModalClose())
+      );
+    } else {
+      dispatch(deleteMessage(message.id)).then(() => dispatch(onModalClose()));
+    }
+  };
 
   return (
     <div
@@ -97,11 +112,7 @@ function DeleteMessageModal() {
             variant="gradient"
             color="blue"
             className="text-neutral-900 dark:text-pearl-500 capitalize"
-            onClick={() =>
-              dispatch(deleteMessage(message.id)).then(() =>
-                dispatch(onModalClose())
-              )
-            }>
+            onClick={handleDelete}>
             <span>Delete</span>
           </Button>
         </div>
